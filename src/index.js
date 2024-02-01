@@ -5,7 +5,11 @@ const bodyParser = require("body-parser");
 const pino = require("pino-http");
 const mainRouter = require("./routes/routes");
 const mongoose = require("mongoose");
-const { otherError, validationError } = require("./handlers/error.handler");
+const {
+	otherError,
+	validationError,
+	appError,
+} = require("./handlers/error.handler");
 const path = require("path");
 
 // app bootstrap
@@ -26,10 +30,7 @@ mongoose.connect(process.env.DB_URL);
 app.use(express.static(path.join(__dirname, "public", "browser")));
 
 // api main entry point
-app.use(
-	"/api",
-	mainRouter
-);
+app.use("/api", mainRouter);
 
 // serving app
 app.get("*", function (req, res) {
@@ -38,6 +39,7 @@ app.get("*", function (req, res) {
 
 // error handling middlewares
 app.use(validationError);
+app.use(appError);
 app.use(otherError);
 
 // use port from env or use 8000 if not set

@@ -1,4 +1,5 @@
 const { ZodError } = require("zod");
+const { AppError } = require("../app_error");
 
 function validationError(err, req, res, next) {
 	if (err instanceof ZodError) {
@@ -20,5 +21,17 @@ function otherError(err, req, res, next) {
 	});
 }
 
+function appError(err, req, res, next) {
+	if (err instanceof AppError) {
+		req.log.error(err);
+		res.status(err.status).json({
+			error: err.name,
+			messages: err.message,
+		});
+	} else {
+		next(err);
+	}
+}
 exports.otherError = otherError;
 exports.validationError = validationError;
+exports.appError = appError;
