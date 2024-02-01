@@ -19,7 +19,7 @@ const app = express();
 app.use(pino());
 
 // set cors option for remote access
-app.use(cors({ origin: ["*"] }));
+app.use(cors({}));
 
 // adding json body parser to app
 app.use(bodyParser.json());
