@@ -1,5 +1,6 @@
 const { User } = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 async function findUser(email, password, role) {
 	const user = await User.findOne({
@@ -30,7 +31,22 @@ async function hashUserPassword(password) {
 	}
 }
 
+const TOKEN_DURATION = 3600;
+function generateUserToken(user) {
+	const token = jwt.sign(
+		{
+			userId: user._id,
+			email: user.email,
+			role: user.role,
+			exp: Math.floor(Date.now() / 1000 + TOKEN_DURATION),
+		},
+		process.env.JWT_SECRET_KEY
+	);
+	return token;
+}
+
 module.exports = {
 	findUser,
-    saveNewUser
+	saveNewUser,
+	generateUserToken,
 };

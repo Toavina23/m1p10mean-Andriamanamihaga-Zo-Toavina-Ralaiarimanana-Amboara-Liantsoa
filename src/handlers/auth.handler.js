@@ -1,7 +1,10 @@
 const z = require("zod");
-const { findUser, saveNewUser } = require("../services/user.service");
+const {
+	findUser,
+	saveNewUser,
+	generateUserToken,
+} = require("../services/user.service");
 const { AppError } = require("../app_error");
-const jwt = require("jsonwebtoken");
 
 const registrationInfoSchema = z.object({
 	email: z.string().min(1).email(),
@@ -14,12 +17,15 @@ async function register(req, res, next) {
 	try {
 		const newUserInfo = registrationInfoSchema.parse(req.body);
 		const newUser = await saveNewUser(newUserInfo);
-		res.status(201).json(newUser._id);
+		const token = generateUserToken(newUser);
+		res.status(201).json({
+			token: token,
+			username: `${newUser.firstname} ${newUser.lastname}`,
+		});
 	} catch (err) {
 		next(err);
 	}
 }
-const TOKEN_DURATION = 3600;
 const authenticationSchema = z.object({
 	email: z.string().min(1).email(),
 	password: z.string().min(8),
@@ -41,15 +47,7 @@ async function authenticate(req, res, next) {
 				"Could not find user with those credentials"
 			);
 		}
-		const token = jwt.sign(
-			{
-				userId: user._id,
-				email: user.email,
-				role: user.role,
-				exp: Math.floor(Date.now() / 1000 + TOKEN_DURATION),
-			},
-			process.env.JWT_SECRET_KEY
-		);
+		const token = generateUserToken(user);
 		res.status(200).json({
 			username: `${user.firstname} ${user.lastname}`,
 			token: token,

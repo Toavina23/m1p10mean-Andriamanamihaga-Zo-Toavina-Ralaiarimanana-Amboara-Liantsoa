@@ -41,6 +41,36 @@ export class AuthService {
         catchError(this.handleError)
       );
   }
+  registerClient(
+    email: string,
+    password: string,
+    firstname: string,
+    lastname: string
+  ) {
+    return this.http
+      .post<AuthenticationPayload>(
+        `${environment.serverUrl}/auth/register`,
+        {
+          email: email,
+          password: password,
+          firstname: firstname,
+          lastname: lastname,
+          role: 'CLIENT',
+        },
+        {
+          reportProgress: true,
+          observe: 'events',
+        }
+      )
+      .pipe(
+        tap((response) => {
+          if (response.type == HttpEventType.Response) {
+            this.savePayload(response.body!.token, response.body!.username);
+          }
+        }),
+        catchError(this.handleError)
+      );
+  }
   private handleError(error: HttpErrorResponse) {
     let userMessage = 'Something bad happened; please try again later.';
     if (error.error instanceof ErrorEvent) {
