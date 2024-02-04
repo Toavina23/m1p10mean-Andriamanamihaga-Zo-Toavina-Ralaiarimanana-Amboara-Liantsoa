@@ -5,7 +5,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Observable, catchError, of, tap, throwError } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 
 type AuthenticationPayload = {
   username: string;
@@ -33,9 +33,9 @@ export class AuthService {
         }
       )
       .pipe(
-        tap((response) => {
-          if (response.type == HttpEventType.Response) {
-            this.savePayload(response.body!.token, response.body!.username);
+        tap((event) => {
+          if (event.type == HttpEventType.Response) {
+            this.savePayload(event.body!.token, event.body!.username);
           }
         }),
         catchError(this.handleError)
@@ -48,7 +48,7 @@ export class AuthService {
     lastname: string
   ) {
     return this.http
-      .post<AuthenticationPayload>(
+      .post<{ userId: string }>(
         `${environment.serverUrl}/auth/register`,
         {
           email: email,
@@ -62,25 +62,56 @@ export class AuthService {
           observe: 'events',
         }
       )
+      .pipe(catchError(this.handleError));
+  }
+  verifyUserEmail(code: string, userId: string) {
+    return this.http
+      .post<AuthenticationPayload>(
+        `${environment.serverUrl}/auth/confirmEmail`,
+        {
+          code: code,
+          userId: userId,
+        },
+        {
+          reportProgress: true,
+          observe: 'events',
+        }
+      )
       .pipe(
-        tap((response) => {
-          if (response.type == HttpEventType.Response) {
-            this.savePayload(response.body!.token, response.body!.username);
+        tap((event) => {
+          if (event.type == HttpEventType.Response) {
+            this.savePayload(event.body!.token, event.body!.username);
           }
         }),
         catchError(this.handleError)
       );
   }
+  resendValidationCode(userId: string) {
+    return this.http
+      .post(
+        `${environment.serverUrl}/auth/resendCode`,
+        { userId: userId },
+        {
+          reportProgress: true,
+          observe: 'events',
+        }
+      )
+      .pipe(catchError(this.handleError));
+  }
   private handleError(error: HttpErrorResponse) {
     let userMessage = 'Something bad happened; please try again later.';
     if (error.error instanceof ErrorEvent) {
+      console.log(error);
     } else {
-      if (error.status === 401) {
-        userMessage = 'Incorrect username or password.';
+      if (error.status === 400 || error.status === 401) {
+        console.log('mandalo ato');
+        console.log(error.error);
+        userMessage = error.error.message;
       }
     }
     return throwError(() => new Error(userMessage));
   }
+
   private savePayload(token: string, username: string) {
     localStorage.setItem('token', token);
     localStorage.setItem('username', username);

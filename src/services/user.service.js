@@ -1,6 +1,11 @@
 const { User } = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { EmailValidation } = require("../models/email-validation");
+const { AppError } = require("../app_error");
+const mongoose = require("mongoose");
+const VALIDATION_CODE_TEMPLATE = require("../templates/validation_code_email_template");
+const { sendMail } = require("../services/email.service");
 
 async function findUser(email, password, role) {
 	const user = await User.findOne({
@@ -13,11 +18,80 @@ async function findUser(email, password, role) {
 	return null;
 }
 
+const CODE_HASH_SALT_ROUND = 5;
+async function checkValidationCode(code, userId) {
+	const emailValidation = await EmailValidation.findOne({
+		userId: userId,
+	})
+		.where("expiresAt")
+		.gte(new Date().getTime());
+	if (emailValidation && bcrypt.compareSync(code, emailValidation.code)) {
+		await EmailValidation.deleteOne({
+			_id: emailValidation._id,
+		});
+		return true;
+	}
+	return false;
+}
+
+async function generateValidationCode(id) {
+	const codeEpirationDate = new Date().getTime() + 10 * 60 * 1000;
+	const randomCode = Math.floor(100000 + Math.random() * 900000).toString();
+	const hashedCode = await bcrypt.hash(randomCode, CODE_HASH_SALT_ROUND);
+	const emailValidation = new EmailValidation({
+		expiresAt: codeEpirationDate,
+		userId: id,
+		code: hashedCode,
+	});
+	await EmailValidation.deleteMany({
+		userId: id,
+	});
+	emailValidation.save();
+	return randomCode;
+}
+
+async function sendNewValidationCode(userId) {
+	const user = await findUserById(userId);
+	if (!user) {
+		throw new AppError(400, "Bad Request", "Utilisateur inconnu");
+	}
+	const code = await generateValidationCode(user._id);
+	await sendEmailValidationCode(code, user);
+}
 async function saveNewUser(userInfo) {
-	const hashedPassword = await hashUserPassword(userInfo.password);
-	const newUser = new User({ ...userInfo, password: hashedPassword });
-	await newUser.save();
-	return newUser;
+	try {
+		const hashedPassword = await hashUserPassword(userInfo.password);
+		const newUser = new User({ ...userInfo, password: hashedPassword });
+		const session = await mongoose.startSession();
+		session.startTransaction();
+		await newUser.save();
+		const code = await generateValidationCode(newUser._id);
+		await sendEmailValidationCode(code, newUser);
+		await session.commitTransaction();
+		await session.endSession();
+		return newUser;
+	} catch (err) {
+		// checks for mongo duplicaton error code
+		if (err.code == 11000) {
+			throw new AppError(400, "Bad Request", "Email déja utilisé");
+		} else {
+			throw err;
+		}
+	}
+}
+async function sendEmailValidationCode(code, newUser) {
+	await sendMail(
+		{
+			from: `Beauty Salon <${process.env.EMAIL_USER}>`,
+			to: newUser.email,
+			subject: "Beauty Salon email validation code",
+			text: code,
+			html: VALIDATION_CODE_TEMPLATE(code),
+		},
+		function (info) {
+			console.log(`Validation code email sent, messageId:${info.messageId}`);
+		}
+	);
 }
 
 const PASSWORD_HASH_SALT_ROUND = 8;
@@ -44,9 +118,18 @@ function generateUserToken(user) {
 	);
 	return token;
 }
-
+async function findUserById(userId) {
+	const user = await User.findOne({
+		_id: userId,
+	});
+	return user;
+}
 module.exports = {
 	findUser,
 	saveNewUser,
 	generateUserToken,
+	generateValidationCode,
+	checkValidationCode,
+	findUserById,
+	sendNewValidationCode,
 };

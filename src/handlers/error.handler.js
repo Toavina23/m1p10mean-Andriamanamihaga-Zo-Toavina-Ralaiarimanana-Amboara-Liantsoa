@@ -7,7 +7,7 @@ function validationError(err, req, res, next) {
 		err.name = "Bad request";
 		res.status(400).json({
 			error: "Bad request",
-			messages: err.issues,
+			message: err.issues,
 		});
 	} else {
 		next(err);
@@ -15,9 +15,11 @@ function validationError(err, req, res, next) {
 }
 
 function otherError(err, req, res, next) {
+	console.log(err);
 	req.log.error(err);
 	res.status(500).json({
-		"Error Message": "Internal server error",
+		error: "internal server error",
+		message: "internal server error",
 	});
 }
 
@@ -26,7 +28,7 @@ function appError(err, req, res, next) {
 		req.log.error(err);
 		res.status(err.status).json({
 			error: err.name,
-			messages: err.message,
+			message: err.message,
 		});
 	} else {
 		next(err);

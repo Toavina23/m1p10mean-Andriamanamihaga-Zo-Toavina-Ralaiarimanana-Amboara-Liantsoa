@@ -20,17 +20,33 @@ export class SignupComponent {
   ) {}
   signupForm = this.fb.group(
     {
-      email: ['', [Validators.required, Validators.email]],
-      firstname: ['', [Validators.required, Validators.pattern('[a-zA-Z ]*')]],
-      lastname: ['', [Validators.required, Validators.pattern('[a-zA-Z ]*')]],
+      email: ['toavinaandr@gmail.com', [Validators.required, Validators.email]],
+      firstname: [
+        'Andria',
+        [Validators.required, Validators.pattern('[a-zA-Z ]*')],
+      ],
+      lastname: [
+        'Rabe',
+        [Validators.required, Validators.pattern('[a-zA-Z ]*')],
+      ],
       password: ['password123', [Validators.required, Validators.minLength(8)]],
       passwordConfirmation: ['password123', [Validators.required]],
     },
     { validators: confirmPasswordValidator }
   );
 
-  error = '';
-  loading = false;
+  emailValidationForm = this.fb.group({
+    code: [
+      '',
+      [Validators.required, Validators.minLength(6), Validators.maxLength(6)],
+    ],
+  });
+
+  error: string = '';
+  loading: boolean = false;
+  userId: string | null = null;
+
+  step: 'information' | 'emailValidation' = 'information';
 
   onSubmit() {
     this.authService
@@ -46,16 +62,46 @@ export class SignupComponent {
             this.loading = true;
           } else if (event?.type == HttpEventType.Response) {
             this.loading = false;
+            this.step = 'emailValidation';
+            this.userId = event.body?.userId!;
+          }
+        },
+        error: (error) => {
+          this.loading = false;
+          this.error = error.message;
+        },
+      });
+  }
+  onEmailValidationSubmit() {
+    this.authService
+      .verifyUserEmail(this.code?.getRawValue(), this.userId!)
+      .subscribe({
+        next: (event) => {
+          if (event?.type == HttpEventType.Sent) {
+            this.loading = true;
+          } else if (event?.type == HttpEventType.Response) {
+            this.loading = false;
             this.router.navigate(['/customer']);
           }
         },
         error: (error) => {
           this.loading = false;
-          this.error = error;
+          this.error = error.message;
         },
       });
   }
-
+  onResendCode() {
+    this.authService.resendValidationCode(this.userId!).subscribe({
+      next: (event) => {
+        if (event?.type == HttpEventType.Response) {
+          alert('Code renvoyé');
+        }
+      },
+      error: (error) => {
+        this.error = error.message;
+      },
+    });
+  }
   get password() {
     return this.signupForm.get('password');
   }
@@ -71,5 +117,8 @@ export class SignupComponent {
   }
   get email() {
     return this.signupForm.get('email');
+  }
+  get code() {
+    return this.emailValidationForm.get('code');
   }
 }
