@@ -49,6 +49,7 @@ export class SignupComponent {
   step: 'information' | 'emailValidation' = 'information';
 
   onSubmit() {
+    this.error = ''
     this.authService
       .registerClient(
         this.email?.getRawValue(),
@@ -73,6 +74,7 @@ export class SignupComponent {
       });
   }
   onEmailValidationSubmit() {
+    this.error = ''
     this.authService
       .verifyUserEmail(this.code?.getRawValue(), this.userId!)
       .subscribe({
@@ -91,6 +93,7 @@ export class SignupComponent {
       });
   }
   onResendCode() {
+    this.error = ''
     this.authService.resendValidationCode(this.userId!).subscribe({
       next: (event) => {
         if (event?.type == HttpEventType.Response) {
