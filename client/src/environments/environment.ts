@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
-  serverUrl: 'http://localhost:8000/api',
+  production: true,
+  serverUrl: 'https://projet-mean-dev-nqolozmr2q-nw.a.run.app/api',
 };
