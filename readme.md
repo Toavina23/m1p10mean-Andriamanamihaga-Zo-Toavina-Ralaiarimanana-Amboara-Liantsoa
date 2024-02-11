@@ -27,4 +27,4 @@ Web app links:
 This project was developped by:
 
 - Andriamanamihaga Zo Toavina ETU 1073
-- Ralaiarimanana Liantsoa Amboara ETU 1150
+- Ralaiarimanana Liantsoa Amboara Ny Avo ETU 1150
