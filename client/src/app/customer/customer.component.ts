@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-customer',
   standalone: true,
-  imports: [],
+  imports: [RouterModule, LucideAngularModule],
   templateUrl: './customer.component.html',
   styleUrl: './customer.component.css',
 })

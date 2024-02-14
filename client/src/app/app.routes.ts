@@ -9,6 +9,7 @@ import { AdminComponent } from './manager/layouts/admin.component';
 import { CreateEmployeeComponent } from './manager/pages/create-employee.component';
 import { ListEmployeesComponent } from './manager/pages/list-employees.component';
 import { UpdateEmployeeComponent } from './manager/pages/update-employee.component';
+import { AppointmentComponent } from './customer/appointment/appointment.component';
 
 export const routes: Routes = [
   {
@@ -23,6 +24,13 @@ export const routes: Routes = [
     path: 'customer',
     component: CustomerComponent,
     canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        title: 'Vos rendez vous',
+        component: AppointmentComponent,
+      },
+    ],
   },
   {
     path: '',
