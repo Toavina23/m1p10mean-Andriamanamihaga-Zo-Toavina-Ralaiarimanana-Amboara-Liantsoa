@@ -2,12 +2,14 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-blank',
+  selector: 'app-manager',
   standalone: true,
   imports: [RouterOutlet],
-  templateUrl: './blank.component.html',
-  styleUrl: './blank.component.css'
+  template: `
+    <router-outlet></router-outlet>
+  `,
+  styles: ``
 })
-export class BlankComponent {
+export class ManagerComponent {
 
 }
