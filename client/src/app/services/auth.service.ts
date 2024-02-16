@@ -6,6 +6,7 @@ import {
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { catchError, tap, throwError } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 
 type AuthenticationPayload = {
   username: string;
@@ -104,7 +105,6 @@ export class AuthService {
       console.log(error);
     } else {
       if (error.status === 400 || error.status === 401) {
-        console.log('mandalo ato');
         console.log(error.error);
         userMessage = error.error.message;
       }
@@ -116,7 +116,26 @@ export class AuthService {
     localStorage.setItem('token', token);
     localStorage.setItem('username', username);
   }
+
   getToken() {
     return localStorage.getItem('token');
+  }
+  customerSessionValid() {
+    const token = this.getToken();
+    return token != null && !this.tokenExpired(token);
+  }
+  private tokenExpired(token: string) {
+    try {
+      const decodedToken = jwtDecode(token) as {
+        userId: string;
+        email: string;
+        role: 'CLIENT';
+        exp: number;
+      };
+      return decodedToken.exp <= new Date().getTime() / 1000;
+    } catch (err) {
+      console.log(err);
+      return true;
+    }
   }
 }

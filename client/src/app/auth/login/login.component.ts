@@ -19,10 +19,7 @@ export class LoginComponent implements OnDestroy, OnInit {
     private router: Router
   ) {}
   loginForm = this.fb.group({
-    email: [
-      'zotoavina.andria@gmail.com',
-      [Validators.required, Validators.email],
-    ],
+    email: ['toavinaandr@gmail.com', [Validators.required, Validators.email]],
     password: ['password123', [Validators.required, Validators.minLength(8)]],
   });
   authenticationSubscription: Subscription | null = null;
@@ -62,8 +59,7 @@ export class LoginComponent implements OnDestroy, OnInit {
     this.authenticationSubscription?.unsubscribe();
   }
   ngOnInit(): void {
-    const token = this.authService.getToken();
-    if (token) {
+    if (this.authService.customerSessionValid()) {
       this.router.navigate(['/customer']);
     }
   }

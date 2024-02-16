@@ -10,6 +10,7 @@ import { CreateEmployeeComponent } from './manager/pages/create-employee.compone
 import { ListEmployeesComponent } from './manager/pages/list-employees.component';
 import { UpdateEmployeeComponent } from './manager/pages/update-employee.component';
 import { AppointmentComponent } from './customer/appointment/appointment.component';
+import { PreferencesComponent } from './customer/preferences/preferences.component';
 
 export const routes: Routes = [
   {
@@ -27,8 +28,18 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        redirectTo: '/customer/appointments',
+        pathMatch: 'full',
+      },
+      {
+        path: 'appointments',
         title: 'Vos rendez vous',
         component: AppointmentComponent,
+      },
+      {
+        path: 'preferences',
+        title: 'Vos préférences',
+        component: PreferencesComponent,
       },
     ],
   },
