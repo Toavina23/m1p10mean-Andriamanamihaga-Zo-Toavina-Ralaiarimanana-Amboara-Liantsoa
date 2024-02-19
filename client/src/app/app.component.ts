@@ -5,8 +5,10 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+  template: `
+    <router-outlet />
+  `,
+  styles: ``
 })
 export class AppComponent {
   title = 'client';
