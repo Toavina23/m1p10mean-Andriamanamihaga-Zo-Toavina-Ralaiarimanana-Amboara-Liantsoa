@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   imports: [],
   template: `
     <!-- start navbar -->
-    <div class="md:w-full md:sticky md:top-0 flex flex-row flex-wrap items-center bg-white p-6 border-b border-gray-300">
+    <div class="md:w-full md:sticky flex flex-row flex-wrap items-center bg-white p-6 border-b">
           
         <!-- logo -->
         <div class="flex-none w-56 flex flex-row items-center">
