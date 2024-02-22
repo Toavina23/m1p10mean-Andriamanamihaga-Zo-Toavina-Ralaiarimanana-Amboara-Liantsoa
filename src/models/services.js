@@ -9,8 +9,8 @@ const serviceSchema = new Schema({
 	description: { type: String, required: true },
 	price: { type: Number, required: true },
 	duration: { type: Number, required: true },
-	employees: { type: [ObjectId], required: true },
+	employees: { type: [ObjectId], required: true, ref: 'user' },
 });
 
-const Service = model("Service", serviceSchema);
+const Service = model("service", serviceSchema);
 exports.Service = Service;

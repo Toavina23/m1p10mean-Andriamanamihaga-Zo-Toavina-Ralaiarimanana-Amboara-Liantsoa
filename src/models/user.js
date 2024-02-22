@@ -11,5 +11,6 @@ const userSchema = new Schema({
 	role: { type: String, required: true, enum: ["ADMIN", "EMPLOYEE", "CLIENT"] },
 });
 
-const User = model("User", userSchema);
+const User = model("user", userSchema);
 exports.User = User;
+exports.UserSchema = userSchema;

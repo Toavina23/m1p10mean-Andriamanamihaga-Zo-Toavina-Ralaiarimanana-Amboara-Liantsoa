@@ -118,12 +118,14 @@ function generateUserToken(user) {
 	);
 	return token;
 }
+
 async function findUserById(userId) {
 	const user = await User.findOne({
 		_id: userId,
 	});
 	return user;
 }
+
 module.exports = {
 	findUser,
 	saveNewUser,
