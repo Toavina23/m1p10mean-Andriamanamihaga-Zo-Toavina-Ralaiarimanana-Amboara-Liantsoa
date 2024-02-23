@@ -93,4 +93,8 @@ export class AppointmentComponent {
   get tasks() {
     return this.appointmentService.getNewTasks;
   }
+  
+  get billAmount() {
+    return this.appointmentService.getTotalBillingAmount()
+  }
 }

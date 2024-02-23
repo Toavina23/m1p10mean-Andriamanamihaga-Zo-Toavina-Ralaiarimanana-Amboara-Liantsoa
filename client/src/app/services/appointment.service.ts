@@ -130,4 +130,12 @@ export class AppointmentService {
   public getServiceById(serviceId: string) {
     return this.services.find((service) => service._id == serviceId);
   }
+
+  public getTotalBillingAmount() {
+    return this.newTasks.reduce((accumulator, newTask) => {
+      const service = this.getServiceById(newTask.serviceId);
+      if (!service) return accumulator;
+      return accumulator + service.price;
+    }, 0);
+  }
 }
