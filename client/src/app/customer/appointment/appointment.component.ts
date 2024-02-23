@@ -5,13 +5,13 @@ import { LucideAngularModule } from 'lucide-angular';
 import { TaskComponent } from '../components/taks/task.component';
 import {
   CdkDragDrop,
-  moveItemInArray,
   DragDropModule,
 } from '@angular/cdk/drag-drop';
-import { Dialog, DialogModule } from '@angular/cdk/dialog';
 import { Service, Task } from '../../types';
 import { NewTaskComponent } from '../components/new-task/new-task.component';
 import { MatButtonModule } from '@angular/material/button';
+import { AppointmentService } from '../../services/appointment.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-appointment',
@@ -20,77 +20,19 @@ import { MatButtonModule } from '@angular/material/button';
     ReactiveFormsModule,
     LucideAngularModule,
     TaskComponent,
+    MatDialogModule,
     DragDropModule,
-    DialogModule,
     MatButtonModule,
   ],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css',
 })
 export class AppointmentComponent {
-  constructor(private fb: FormBuilder, public dialog: Dialog) {}
-  services: Service[] = [
-    {
-      title: 'Manucure',
-      description: 'Soin des mains',
-      duration: 30,
-      price: 30000,
-    },
-
-    {
-      title: 'Pedicure',
-      description: 'Soin des pieds',
-      duration: 45,
-      price: 35000,
-    },
-  ];
-  tasks: Task[] = [
-    {
-      start: new Date(),
-      end: new Date(Date.now() + 30 * 60 * 1000),
-      employee: {
-        firstname: 'John',
-        lastname: 'Doe',
-        availability: new Date(),
-      },
-      service: {
-        description: 'Bla bla',
-        duration: 45,
-        price: 35000,
-        title: 'Manucure',
-      },
-    },
-    {
-      start: new Date(Date.now() + 30 * 60 * 1000),
-      end: new Date(Date.now() + 60 * 60 * 1000),
-      employee: {
-        firstname: 'Jeanne',
-        lastname: 'Doe',
-        availability: new Date(),
-      },
-      service: {
-        description: 'Bla bla',
-        duration: 45,
-        price: 35000,
-        title: 'Pédicure',
-      },
-    },
-    {
-      start: new Date(Date.now() + 45 * 60 * 1000),
-      end: new Date(Date.now() + 60 * 60 * 1000),
-      employee: {
-        firstname: 'Jeanne',
-        lastname: 'Doe',
-        availability: new Date(),
-      },
-      service: {
-        description: 'Bla bla',
-        duration: 30,
-        price: 35000,
-        title: 'Pédicure',
-      },
-    },
-  ];
+  constructor(
+    private fb: FormBuilder,
+    public dialog: MatDialog,
+    private appointmentService: AppointmentService
+  ) {}
 
   error: string = '';
   loading: boolean = false;
@@ -105,11 +47,12 @@ export class AppointmentComponent {
   );
 
   openDialog() {
-    const dialogRef = this.dialog.open<Task>(NewTaskComponent, {
-      panelClass: ['w-1/3', 'h-1/2'],
-    });
-    dialogRef.closed.subscribe((result) => {
-      console.log('Tasks');
+    this.dialog.open(NewTaskComponent, {
+      data: {
+        services: this.services,
+        appointmentDate: this.latestServiceStartDate,
+      },
+      panelClass: 'w-1/3',
     });
   }
 
@@ -123,17 +66,31 @@ export class AppointmentComponent {
   }
 
   drop(event: CdkDragDrop<Task[]>): void {
-    const simulationArray = [...this.tasks];
-    moveItemInArray(simulationArray, event.previousIndex, event.currentIndex);
-    let taskDate = new Date(this.appointmentDate?.getRawValue());
-    let offsetInMinutes = 0;
-    simulationArray.forEach((task) => {
-      task.start = new Date(taskDate.getTime() + offsetInMinutes * 60 * 1000);
-      task.end = new Date(
-        task.start.getTime() + task.service.duration * 60 * 1000
-      );
-      offsetInMinutes += task.service.duration;
-    });
-    this.tasks = simulationArray;
+    this.appointmentService.reorderNewTasks(
+      event.previousIndex,
+      event.currentIndex,
+      this.appointmentDateGMT3
+    );
+  }
+  get services() {
+    console.log(this.appointmentService.services);
+    return [...this.appointmentService.services];
+  }
+
+  get appointmentDateGMT3() {
+    return new Date(this.appointmentDate?.getRawValue());
+  }
+
+  get latestServiceStartDate() {
+    const tasks = this.appointmentService.getNewTasks;
+    if (tasks.length == 0) {
+      return this.appointmentDateGMT3;
+    }
+    // added one minute for transition
+    return new Date(tasks[tasks.length - 1].end.getTime() + 60_000);
+  }
+
+  get tasks() {
+    return this.appointmentService.getNewTasks;
   }
 }

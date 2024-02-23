@@ -1,6 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { Task } from '../../../types';
+import {
+  AppointmentService,
+  NewTask,
+} from '../../../services/appointment.service';
 @Component({
   selector: 'app-customer-task',
   standalone: true,
@@ -9,16 +13,21 @@ import { Task } from '../../../types';
   styleUrl: './task.component.css',
 })
 export class TaskComponent {
-  @Input() task?: Task;
-  
+  constructor(private appointmentService: AppointmentService) {}
+  @Input() task?: NewTask;
+
   get taskDate() {
-   return this.task?.start.toLocaleDateString() 
+    return this.task?.start.toLocaleDateString();
   }
   get taskTime() {
-   return this.task?.start.toLocaleTimeString() 
+    return this.task?.start.toLocaleTimeString();
   }
-  
+
   get employee() {
-    return `${this.task?.employee.firstname} ${this.task?.employee.lastname}`
+    return this.task?.employeeFullName;
+  }
+
+  get service() {
+    return this.appointmentService.getServiceById(this.task?.serviceId!)?.title;
   }
 }

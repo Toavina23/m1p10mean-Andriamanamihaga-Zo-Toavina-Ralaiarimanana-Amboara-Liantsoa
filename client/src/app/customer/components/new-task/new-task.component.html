@@ -1,19 +1,21 @@
 <div class="modal">
     <h3 class="text-xl font-semibold">Nouvelle tache</h3>
-    <form [formGroup]="taskForm">
+    <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
         <div class=" sm:col-span-3 my-3">
             <mat-form-field appearance="fill" class="w-full">
                 <mat-label>Service</mat-label>
-                <mat-select formControlName="selectField">
-                    <mat-option [value]="1">Manucure  (45 minutes)</mat-option>
-                    <mat-option [value]="2">Pedicure  (45 minutes)</mat-option>
+                <mat-select formControlName="service" (valueChange)="onServiceSelected($event)">
+                    @for (service of data.services; track $index) {
+                    <mat-option [value]="service._id">{{service.title}} ({{service.duration}} minutes): Ar
+                        {{service.price}}</mat-option>
+                    }
                 </mat-select>
             </mat-form-field>
             <p class="text-red-600 font-semibold text-xs">
                 @if (service?.invalid && (service?.dirty ||
                 service?.touched)) {
                 @if (service?.errors?.['required']) {
-                Date de rendez-vous requise
+                Service requis
                 }
                 }
             </p>
@@ -21,22 +23,28 @@
         <div class=" sm:col-span-3 my-3">
             <mat-form-field appearance="fill" class="w-full">
                 <mat-label>Employe</mat-label>
-                <mat-select formControlName="selectField">
-                    <mat-option [value]="1">John Doe (disponnible dans 45 minutes)</mat-option>
-                    <mat-option [value]="2">Jeanne Doe</mat-option>
+                <mat-select formControlName="employee">
+                    @for (employee of employees; track $index) {
+                    <mat-option [value]="employee.employeeId">{{employee.firstname}}
+                        {{employee.lastname}}
+                        @if(employee.availableIn != 0 ) {
+                        (décalage de {{employee.availableIn}} minutes)
+                        }
+                    </mat-option>
+                    }
                 </mat-select>
             </mat-form-field>
             <p class="text-red-600 font-semibold text-xs">
-                @if (service?.invalid && (service?.dirty ||
-                service?.touched)) {
-                @if (service?.errors?.['required']) {
-                Date de rendez-vous requise
+                @if (employee?.invalid && (employee?.dirty ||
+                employee?.touched)) {
+                @if (employee?.errors?.['required']) {
+                Employé requis
                 }
                 }
             </p>
         </div>
         <div class=" sm:col-span-3 my-3">
-            <button mat-raised-button color="primary">Enregistrer</button>
+            <button mat-raised-button color="primary" type="submit">Enregistrer</button>
         </div>
     </form>
 </div>
