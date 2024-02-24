@@ -20,6 +20,7 @@ const appointmentSchema = z.object({
 async function createNewAppointment(req, res, next) {
 	try {
 		const appointmentPayload = appointmentSchema.parse(req.body);
+		console.log(appointmentPayload)
 		await saveAppointment(appointmentPayload);
 		res.status(201).json({
 			status: "created",

@@ -1,6 +1,5 @@
 const { AppError } = require("../app_error");
 const { Appointment } = require("../models/appointment");
-const { User } = require("../models/user");
 const { saveTask } = require("./task.service");
 const userService = require("./user.service");
 
@@ -13,7 +12,7 @@ async function saveAppointment(appointmentPayload) {
 		const tasksIds = [];
 		for (task of appointmentPayload.tasks) {
 			const taskId = await saveTask(
-				task.start,
+				new Date(new Date(task.start).getTime() + 3 * 3_600_000),
 				task.serviceId,
 				task.employeeId
 			);
@@ -28,7 +27,9 @@ async function saveAppointment(appointmentPayload) {
 				role: client.role,
 			},
 			paymentId: appointmentPayload.paymentId,
-			startDate: new Date(appointmentPayload.startDate + 3 * 3_600_000),
+			startDate: new Date(
+				new Date(appointmentPayload.startDate).getTime() + 3 * 3_600_000
+			),
 			status: 0,
 			tasks: tasksIds,
 		});
