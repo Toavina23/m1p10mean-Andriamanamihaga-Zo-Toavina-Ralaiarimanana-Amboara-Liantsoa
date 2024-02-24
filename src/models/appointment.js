@@ -1,9 +1,13 @@
-const { Schema, model } = require("mongoose");
+const {
+	Schema,
+	model,
+	Types: { ObjectId },
+} = require("mongoose");
 const { UserSchema } = require("./user");
-const { Task } = require("./task");
 
 const EmbededUserSchema = new Schema({
-	email: UserSchema.obj.email,
+	clientId: { type: ObjectId, required: true },
+	email: { type: String, required: true },
 	firstname: UserSchema.obj.firstname,
 	lastname: UserSchema.obj.lastname,
 	role: UserSchema.obj.role,
@@ -12,8 +16,9 @@ const EmbededUserSchema = new Schema({
 const appointmentSchema = new Schema({
 	startDate: { type: Date, required: true },
 	client: { type: EmbededUserSchema },
-	tasks: { type: [Task], required: true },
+	tasks: { type: [ObjectId], ref: "task", required: true },
 	status: { type: Number, default: 0 },
+	paymentId: { type: String, required: true },
 });
 
 const Appointment = model("appointment", appointmentSchema);
