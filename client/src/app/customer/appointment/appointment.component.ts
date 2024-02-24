@@ -1,17 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { validateAppointmentDate } from '../appointment.validaton';
 import { LucideAngularModule } from 'lucide-angular';
 import { TaskComponent } from '../components/taks/task.component';
-import {
-  CdkDragDrop,
-  DragDropModule,
-} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { Service, Task } from '../../types';
 import { NewTaskComponent } from '../components/new-task/new-task.component';
 import { MatButtonModule } from '@angular/material/button';
 import { AppointmentService } from '../../services/appointment.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PaymentComponent } from '../components/payment.component';
+import { PaymentService } from '../../services/payment.service';
 
 @Component({
   selector: 'app-appointment',
@@ -23,6 +22,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     MatDialogModule,
     DragDropModule,
     MatButtonModule,
+    PaymentComponent,
   ],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css',
@@ -31,10 +31,13 @@ export class AppointmentComponent {
   constructor(
     private fb: FormBuilder,
     public dialog: MatDialog,
-    private appointmentService: AppointmentService
+    private appointmentService: AppointmentService,
+    private paymentService: PaymentService
   ) {}
 
+  step: 'serviceSelection' | 'checkout' = 'serviceSelection';
   error: string = '';
+
   loading: boolean = false;
   appointmentForm = this.fb.group(
     {
@@ -45,7 +48,6 @@ export class AppointmentComponent {
     },
     { validators: [validateAppointmentDate] }
   );
-
   openDialog() {
     this.dialog.open(NewTaskComponent, {
       data: {
@@ -59,6 +61,8 @@ export class AppointmentComponent {
   onSubmit() {
     console.log(this.appointmentDate?.getRawValue());
     console.log('submit');
+    this.paymentService.generatePaymentIntent(this.billAmount);
+    this.step = 'checkout'
   }
 
   get appointmentDate() {
@@ -93,8 +97,8 @@ export class AppointmentComponent {
   get tasks() {
     return this.appointmentService.getNewTasks;
   }
-  
+
   get billAmount() {
-    return this.appointmentService.getTotalBillingAmount()
+    return this.appointmentService.getTotalBillingAmount();
   }
 }

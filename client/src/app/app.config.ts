@@ -13,6 +13,8 @@ import {
 } from 'lucide-angular';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { provideNgxStripe } from 'ngx-stripe';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,5 +32,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     { provide: MAT_DIALOG_DATA, useValue: {} },
     { provide: MatDialogRef, useValue: {} },
+    provideNgxStripe(environment.stripePublicKey),
   ],
 };
