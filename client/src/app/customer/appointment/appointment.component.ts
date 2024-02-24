@@ -11,6 +11,8 @@ import { AppointmentService } from '../../services/appointment.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PaymentComponent } from '../components/payment.component';
 import { PaymentService } from '../../services/payment.service';
+import { HttpEventType } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-appointment',
@@ -32,7 +34,8 @@ export class AppointmentComponent {
     private fb: FormBuilder,
     public dialog: MatDialog,
     private appointmentService: AppointmentService,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private router: Router
   ) {}
 
   step: 'serviceSelection' | 'checkout' = 'serviceSelection';
@@ -62,9 +65,33 @@ export class AppointmentComponent {
     console.log(this.appointmentDate?.getRawValue());
     console.log('submit');
     this.paymentService.generatePaymentIntent(this.billAmount);
-    this.step = 'checkout'
+    this.step = 'checkout';
+    this.error = '';
   }
 
+  onPaymentSuccess(paymentId: string) {
+    this.step = 'serviceSelection';
+    this.appointmentService
+      .saveNewAppointment(this.appointmentDate?.getRawValue(), paymentId)
+      .subscribe({
+        next: (result) => {
+          if (result.type == HttpEventType.Response) {
+            if (result.status == 201) {
+              this.appointmentService.clearNewTasks();
+              this.appointmentDate?.setValue(
+                new Date(Date.now() + 4 * 3600 * 1000)
+                  .toISOString()
+                  .slice(0, 16)
+              );
+              this.router.navigate(['/customer']);
+            }
+          }
+        },
+        error: (error) => {
+          this.error = error.message;
+        },
+      });
+  }
   get appointmentDate() {
     return this.appointmentForm.get('appointmentDate');
   }

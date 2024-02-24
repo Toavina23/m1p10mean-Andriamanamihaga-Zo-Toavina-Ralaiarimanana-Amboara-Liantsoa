@@ -3,12 +3,13 @@ import {
   HttpErrorResponse,
   HttpEventType,
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Service, Task } from '../types';
 import { Subscription, catchError, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { AuthService } from './auth.service';
 
 export type EmployeeAvailability = {
   employeeId: string;
@@ -26,15 +27,60 @@ export type NewTask = {
 @Injectable({
   providedIn: 'root',
 })
-export class AppointmentService {
+export class AppointmentService implements OnDestroy {
   services: Service[] = [];
   private newTasks: NewTask[] = [];
   serviceFetchSubscription: Subscription | undefined;
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private authService: AuthService
+  ) {
     this.serviceFetchSubscription = this.getAllService().subscribe();
   }
   ngOnDestroy() {
     this.serviceFetchSubscription?.unsubscribe();
+  }
+
+  public saveNewAppointment(appointmentDate: string, paymentId: string) {
+    const startDate = new Date(
+      new Date(appointmentDate).getTime() + 3 * 3600000
+    )
+      .toISOString()
+      .slice(0, 16);
+    const userId = this.authService.getUserId();
+    const tasks = this.newTasks.map((task) => {
+      return {
+        start: new Date(task.start.getTime() + 3 * 3600000)
+          .toISOString()
+          .slice(0, 16),
+        serviceId: task.serviceId,
+        employeeId: task.employeeId,
+      };
+    });
+    console.log(
+      JSON.stringify({
+        startDate: startDate,
+        paymentId: paymentId,
+        userId: userId,
+        tasks: tasks,
+      })
+    );
+    return this.http
+      .post<{ status: string }>(
+        `${environment.serverUrl}/appointments`,
+        {
+          startDate: startDate,
+          paymentId: paymentId,
+          userId: userId,
+          tasks: tasks,
+        },
+        {
+          reportProgress: true,
+          observe: 'events',
+        }
+      )
+      .pipe(catchError(this.handleError));
   }
 
   public getAllService() {
@@ -137,5 +183,8 @@ export class AppointmentService {
       if (!service) return accumulator;
       return accumulator + service.price;
     }, 0);
+  }
+  public clearNewTasks() {
+    this.newTasks = [];
   }
 }

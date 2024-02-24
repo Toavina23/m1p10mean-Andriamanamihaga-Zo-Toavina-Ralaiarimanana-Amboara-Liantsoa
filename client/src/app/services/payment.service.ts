@@ -14,28 +14,13 @@ import { Router } from '@angular/router';
 export class PaymentService {
   constructor(private http: HttpClient, private router: Router) {}
 
-  private stripeClientSecretSource = new BehaviorSubject<string | undefined>(
-    undefined
-  );
-  stripeClientSecret$ = this.stripeClientSecretSource.asObservable();
-
   public generatePaymentIntent(amount: number) {
-    this.http
+    return this.http
       .post<{ secret: string }>(
         `${environment.serverUrl}/payments/paymentIntents`,
         { amount: amount },
-        { reportProgress: true, observe: 'events' }
       )
-      .pipe(
-        tap((event) => {
-          if (event.type === HttpEventType.Response) {
-            this.stripeClientSecretSource.next(event.body?.secret);
-          }
-        }),
-        catchError(this.handleError)
-      )
-      .subscribe();
-    // Now stripeClientSecret$ will emit the new value to all subscribers
+      .pipe(catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {

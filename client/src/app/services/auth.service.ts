@@ -121,21 +121,41 @@ export class AuthService {
     return localStorage.getItem('token');
   }
   customerSessionValid() {
-    const token = this.getToken();
-    return token != null && !this.tokenExpired(token);
+    return !this.tokenExpired();
   }
-  private tokenExpired(token: string) {
+  private decodeAuthToken() {
     try {
+      const token = this.getToken();
+      if (!token) {
+        throw new Error('no auth token');
+      }
       const decodedToken = jwtDecode(token) as {
         userId: string;
         email: string;
         role: 'CLIENT';
         exp: number;
       };
+      return decodedToken;
+    } catch (err) {
+      throw err;
+    }
+  }
+  private tokenExpired() {
+    try {
+      const decodedToken = this.decodeAuthToken();
       return decodedToken.exp <= new Date().getTime() / 1000;
     } catch (err) {
       console.log(err);
       return true;
+    }
+  }
+  public getUserId() {
+    try {
+      const decodedToken = this.decodeAuthToken();
+      return decodedToken.userId;
+    } catch (err) {
+      console.log(err);
+      throw err;
     }
   }
 }

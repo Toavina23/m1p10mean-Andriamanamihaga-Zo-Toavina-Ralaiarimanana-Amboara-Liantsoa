@@ -1,4 +1,15 @@
-import { Component, OnInit, ViewChild, signal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChange,
+  SimpleChanges,
+  ViewChild,
+  signal,
+} from '@angular/core';
 import {
   StripeElementsDirective,
   StripePaymentElementComponent,
@@ -15,6 +26,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { AppointmentService } from '../../services/appointment.service';
 
 @Component({
   selector: 'app-appointment-payment',
@@ -29,7 +41,7 @@ import { MatInputModule } from '@angular/material/input';
   ],
   template: `
     <form (submit)="processPayment()" [formGroup]="paymentElementForm">
-      <div class="w-1/3 my-4">
+      <div class="w-2/5 my-4">
         <h1>Entrez vos informations de payement</h1>
         <div class="flex gap-4">
           <mat-form-field class="example-full-width" appearance="fill">
@@ -49,13 +61,14 @@ import { MatInputModule } from '@angular/material/input';
           <input matInput placeholder="city" formControlName="city" />
         </mat-form-field>
         @if(!loading) {
-
         <ngx-stripe-elements
           [stripe]="stripe"
           [elementsOptions]="elementOptions"
         >
           <ngx-stripe-payment [options]="paymentElementOptions" />
         </ngx-stripe-elements>
+        } @else {
+        <p>Loading....</p>
         }
       </div>
       <button
@@ -70,9 +83,10 @@ import { MatInputModule } from '@angular/material/input';
   `,
   styles: ``,
 })
-export class PaymentComponent implements OnInit {
+export class PaymentComponent implements OnChanges {
   @ViewChild(StripePaymentElementComponent)
   elements!: StripePaymentElementComponent;
+  @Output() paymentId = new EventEmitter<string>();
   loading = true;
   stripe: StripeServiceInterface = injectStripe(environment.stripePublicKey);
   elementOptions: StripeElementsOptions = {
@@ -83,9 +97,10 @@ export class PaymentComponent implements OnInit {
     private paymentService: PaymentService,
     private fb: FormBuilder
   ) {}
+  @Input() amount: number | undefined;
   paymentElementForm = this.fb.group({
     name: ['John doe', [Validators.required]],
-    email: ['support@ngx-stripe.dev', [Validators.required]],
+    email: ['zotoavina.andria@gmail.com', [Validators.required]],
     address: ['MB 406 mahabo'],
     zipcode: ['102'],
     city: ['Antananarivo'],
@@ -98,16 +113,21 @@ export class PaymentComponent implements OnInit {
     },
     defaultValues: {},
   };
-  ngOnInit() {
-    this.paymentService.stripeClientSecret$.subscribe((clientSecret) => {
-      if (clientSecret) {
-        this.elementOptions = {
-          locale: 'auto',
-          clientSecret: clientSecret,
-        };
-        this.loading = false;
-      }
-    });
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes['amount']) {
+      return;
+    }
+    this.paymentService
+      .generatePaymentIntent(this.amount!)
+      .subscribe((result) => {
+        if (result) {
+          this.elementOptions = {
+            locale: 'auto',
+            clientSecret: result.secret,
+          };
+          this.loading = false;
+        }
+      });
   }
   processPayment() {
     if (this.paying()) return;
@@ -135,12 +155,14 @@ export class PaymentComponent implements OnInit {
       .subscribe((result) => {
         this.paying.set(false);
         if (result.error) {
-          alert({ success: false, error: result.error.message });
+          console.log(result.error);
+          alert('Le payement a échouer');
         } else {
           if (result.paymentIntent.status == 'succeeded') {
-            alert(
+            console.log(
               `payerrrrrrrr ${result.paymentIntent.amount}: id=${result.paymentIntent.id}`
             );
+            this.paymentId.emit(result.paymentIntent.id);
           }
         }
       });

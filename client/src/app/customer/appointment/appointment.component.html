@@ -29,7 +29,8 @@
                 <div class="">
                     <p class="font-medium m-0">Services</p>
                 </div>
-                <button type="button" (click)="openDialog()" [disabled]="appointmentForm.invalid" mat-button color="primary">
+                <button type="button" (click)="openDialog()" [disabled]="appointmentForm.invalid" mat-button
+                    color="primary">
                     + Ajouter
                 </button>
             </div>
@@ -51,6 +52,6 @@
     </form>
     }
     @else if (step == "checkout") {
-    <app-appointment-payment></app-appointment-payment>
+    <app-appointment-payment (paymentId)="onPaymentSuccess($event)" [amount]="billAmount"></app-appointment-payment>
     }
 </div>
