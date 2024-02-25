@@ -26,7 +26,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { AppointmentService } from '../../services/appointment.service';
 
 @Component({
   selector: 'app-appointment-payment',

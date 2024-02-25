@@ -13,6 +13,7 @@ import { PaymentComponent } from '../components/payment.component';
 import { PaymentService } from '../../services/payment.service';
 import { HttpEventType } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-appointment',
@@ -25,6 +26,7 @@ import { Router } from '@angular/router';
     DragDropModule,
     MatButtonModule,
     PaymentComponent,
+    MatInputModule,
   ],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css',
@@ -42,12 +44,16 @@ export class AppointmentComponent {
   error: string = '';
 
   loading: boolean = false;
+  promotionCodeData: { reduction: number; id: string } | undefined;
+  loadingPromotionCode = false;
+  promotionCodeError = '';
   appointmentForm = this.fb.group(
     {
       appointmentDate: [
         new Date(Date.now() + 4 * 3600 * 1000).toISOString().slice(0, 16),
         [Validators.required],
       ],
+      promotionCode: ['', Validators.min(6)],
     },
     { validators: [validateAppointmentDate] }
   );
@@ -69,10 +75,38 @@ export class AppointmentComponent {
     this.error = '';
   }
 
+  onPromoCodeSubmition() {
+    console.log(this.promotionCode?.getRawValue());
+    this.paymentService
+      .getPromotionCodeData(this.promotionCode?.getRawValue())
+      .subscribe({
+        next: (event) => {
+          if (event.type == HttpEventType.Sent) {
+            this.loadingPromotionCode = true;
+          }
+          if (event.type == HttpEventType.Response) {
+            this.loadingPromotionCode = false;
+            if (event.ok && event.body) {
+              this.promotionCodeData = event.body;
+            }
+          }
+        },
+        error: (err) => {
+          this.loadingPromotionCode = false;
+          this.promotionCodeError = err.message;
+        },
+      });
+  }
+
   onPaymentSuccess(paymentId: string) {
     this.step = 'serviceSelection';
     this.appointmentService
-      .saveNewAppointment(this.appointmentDate?.getRawValue(), paymentId)
+      .saveNewAppointment(
+        this.appointmentDate?.getRawValue(),
+        paymentId,
+        this.billAmount,
+        this.promotionCodeData?.id
+      )
       .subscribe({
         next: (result) => {
           if (result.type == HttpEventType.Response) {
@@ -83,6 +117,7 @@ export class AppointmentComponent {
                   .toISOString()
                   .slice(0, 16)
               );
+              this.appointmentForm.reset();
               this.router.navigate(['/customer']);
             }
           }
@@ -94,6 +129,9 @@ export class AppointmentComponent {
   }
   get appointmentDate() {
     return this.appointmentForm.get('appointmentDate');
+  }
+  get promotionCode() {
+    return this.appointmentForm.get('promotionCode');
   }
 
   drop(event: CdkDragDrop<Task[]>): void {
@@ -124,8 +162,14 @@ export class AppointmentComponent {
   get tasks() {
     return this.appointmentService.getNewTasks;
   }
+  get promoCodeReduction() {
+    return this.promotionCodeData?.reduction ?? 0;
+  }
 
   get billAmount() {
-    return this.appointmentService.getTotalBillingAmount();
+    return (
+      this.appointmentService.getTotalBillingAmount() *
+      (1 - this.promoCodeReduction / 100)
+    );
   }
 }

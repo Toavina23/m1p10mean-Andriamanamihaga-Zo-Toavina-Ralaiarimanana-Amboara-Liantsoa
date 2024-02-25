@@ -18,7 +18,19 @@ export class PaymentService {
     return this.http
       .post<{ secret: string }>(
         `${environment.serverUrl}/payments/paymentIntents`,
-        { amount: amount },
+        { amount: amount }
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  public getPromotionCodeData(code: string) {
+    return this.http
+      .get<{ reduction: number, id: string }>(
+        `${environment.serverUrl}/promotionCodes/${code}`,
+        {
+          reportProgress: true,
+          observe: 'events',
+        }
       )
       .pipe(catchError(this.handleError));
   }

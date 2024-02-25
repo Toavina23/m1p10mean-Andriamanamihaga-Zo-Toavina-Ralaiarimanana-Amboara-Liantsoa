@@ -9,12 +9,20 @@
                 {{taskDate}}
             </p>
         </div>
-        <div class="flex flex-row text-md h-full gap-3">
-            <lucide-icon name="user-round"></lucide-icon> {{employee}}
+        <div class="flex flex-col gap-5">
+            <div class="flex flex-row text-md h-full gap-3">
+                <lucide-icon name="user-round"></lucide-icon> {{employee}}
+            </div>
+            <div class="flex flex-row text-md h-full gap-3">
+                <lucide-icon name="hourglass"></lucide-icon>
+                {{taskTime}}
+            </div>
         </div>
-        <div class="flex flex-row text-md h-full gap-3">
-            <lucide-icon name="hourglass"></lucide-icon>
-            {{taskTime}}
+        <div class="">
+            <div class="flex flex-row text-md h-full gap-3">
+                <lucide-icon name="receipt"></lucide-icon>
+                AR {{amount}}
+            </div>
         </div>
     </div>
 </div>
