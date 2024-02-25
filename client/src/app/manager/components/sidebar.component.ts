@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faChartPie, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faChartPie, faUsers, faHandshake } from '@fortawesome/free-solid-svg-icons';
 import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [FontAwesomeModule, RouterModule],
+  imports: [FontAwesomeModule, RouterModule, CommonModule],
   template: `
     <!-- start sidebar -->
     <div id="sideBar" class="flex flex-col flex-wrap bg-white border rounded p-6 flex-none w-64 md:h-[100%]">
@@ -20,11 +21,17 @@ import { Router, RouterModule } from '@angular/router';
         </a>
         <a 
           routerLink="/manager/employees"
-          class="mb-3 capitalize font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500"
-          [className]="employeesRoute.includes(route) ? 'text-teal-600' : ''"
+          [ngClass]="{'mb-3 capitalize font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500': true, 'text-teal-600': employeesRoute.includes(route)}"
         >
           <fa-icon [icon]="faUsers" class="text-xs mr-2"></fa-icon>
           Employés
+        </a>
+        <a 
+          routerLink="/manager/services"
+          [ngClass]="{'mb-3 capitalize font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500': true, 'text-teal-600': servicesRoute.includes(route)}"
+        >
+          <fa-icon [icon]="faHandshake" class="text-xs mr-2"></fa-icon>
+          Services
         </a>
         <!-- end link -->
     </div>
@@ -39,8 +46,10 @@ export class SidebarComponent {
 
   faChartPie = faChartPie
   faUsers = faUsers
+  faHandshake = faHandshake
 
-  employeesRoute = ['/manager/new-employee', '/manager/employees', '/manager/update-employee']
+  employeesRoute = ['/manager/employees/new', '/manager/employees']
+  servicesRoute = ['/manager/services/new', '/manager/services']
   
   get route() {
     return this.router.url
