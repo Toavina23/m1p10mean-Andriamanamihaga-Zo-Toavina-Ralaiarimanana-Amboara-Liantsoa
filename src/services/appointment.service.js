@@ -2,6 +2,7 @@ const { AppError } = require("../app_error");
 const { Appointment } = require("../models/appointment");
 const { saveTask } = require("./task.service");
 const userService = require("./user.service");
+const { findPromotionCodeById } = require("./promotionCode.service");
 
 async function saveAppointment(appointmentPayload) {
 	try {
@@ -18,6 +19,9 @@ async function saveAppointment(appointmentPayload) {
 			);
 			tasksIds.push(taskId);
 		}
+		const promotionCode = await findPromotionCodeById(
+			appointmentPayload.promotionCodeId
+		);
 		const newAppointment = new Appointment({
 			client: {
 				clientId: client._id,
@@ -27,11 +31,17 @@ async function saveAppointment(appointmentPayload) {
 				role: client.role,
 			},
 			paymentId: appointmentPayload.paymentId,
+			amountPaid: appointmentPayload.amountPaid,
 			startDate: new Date(
 				new Date(appointmentPayload.startDate).getTime() + 3 * 3_600_000
 			),
 			status: 0,
 			tasks: tasksIds,
+			promotionCode: {
+				codeId: promotionCode._id,
+				code: promotionCode.code,
+				reduction: promotionCode.reduction,
+			},
 		});
 		await newAppointment.save();
 	} catch (err) {

@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
-import { Task } from '../../../types';
 import {
   AppointmentService,
   NewTask,
@@ -29,5 +28,9 @@ export class TaskComponent {
 
   get service() {
     return this.appointmentService.getServiceById(this.task?.serviceId!)?.title;
+  }
+
+  get amount() {
+    return this.appointmentService.getServiceById(this.task?.serviceId!)?.price;
   }
 }

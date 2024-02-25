@@ -42,7 +42,12 @@ export class AppointmentService implements OnDestroy {
     this.serviceFetchSubscription?.unsubscribe();
   }
 
-  public saveNewAppointment(appointmentDate: string, paymentId: string) {
+  public saveNewAppointment(
+    appointmentDate: string,
+    paymentId: string,
+    amountPaid: number,
+    promotionCodeId?: string
+  ) {
     const startDate = new Date(
       new Date(appointmentDate).getTime() + 3 * 3600000
     )
@@ -74,6 +79,8 @@ export class AppointmentService implements OnDestroy {
           paymentId: paymentId,
           userId: userId,
           tasks: tasks,
+          promotionCodeId: promotionCodeId,
+          amountPaid: amountPaid,
         },
         {
           reportProgress: true,
