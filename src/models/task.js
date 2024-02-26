@@ -19,6 +19,8 @@ const TaskSchema = new Schema({
 		ref: "user",
 		required: true,
 	},
+	servicePrice: {type: Number, required: true},
+	employeeComission: {type: Number, required: true}
 });
 
 const Task = model("task", TaskSchema);
