@@ -52,14 +52,14 @@ import { environment } from '../../../../environments/environment';
 export class ListServiceComponent {
   updateIcon = faPencilAlt
   deleteIcon = faTrash
-  services: any = []
+  services: any[] = []
   loading = ''
 
   constructor(private http: HttpClient){}
   ngOnInit(): void {
     this.http
       .get(`${environment.serverUrl}/services`)
-      .subscribe(res => this.services = res)
+      .subscribe((res: any) => this.services = res.services)
   }
 
   deleteService(id: string) {

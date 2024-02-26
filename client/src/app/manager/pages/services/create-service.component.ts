@@ -40,12 +40,13 @@ import { environment } from '../../../../environments/environment';
         <div class="col-span-3">
           <input formControlName="price" type="number" placeholder="Prix (en Ariary)" class="w-full p-3 border rounded">
         </div>
-        <div class="col-span-3 relative">
-          <select [ngModel]="selectedEmployee" class="w-full bg-white p-3 border rounded">
-            <option [value]="null"></option>
-            <option *ngFor="let employee of employees" [value]="employee">{{ employee.firstname }} {{ employee.lastname }}</option>
-          </select>
-          <app-floating-label text="Employés"></app-floating-label>
+        <div class="col-span-3 flex items-center space-x-3">
+          <div class="pt-3">
+              <p class="font-medium m-0">Employés</p>
+          </div>
+          <button class="btn-gray">
+              + Ajouter
+          </button>
         </div>
         <div class="col-span-6 mt-6 flex justify-end">
           <button type="submit" [ngClass]="{ 'btn-bs-dark': true, 'opacity-30': loading }" >Enregistrer</button>
