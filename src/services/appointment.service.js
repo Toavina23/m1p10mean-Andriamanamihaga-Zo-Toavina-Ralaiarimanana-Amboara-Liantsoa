@@ -3,7 +3,6 @@ const { Appointment } = require("../models/appointment");
 const { saveTask } = require("./task.service");
 const userService = require("./user.service");
 const { findPromotionCodeById } = require("./promotionCode.service");
-const { Task } = require("../models/task");
 
 async function saveAppointment(appointmentPayload) {
 	try {
@@ -11,12 +10,24 @@ async function saveAppointment(appointmentPayload) {
 		if (!client) {
 			throw new AppError("client not found");
 		}
+		let promotionCode = undefined;
+		let taskPercentOff = 0;
+		if (appointmentPayload.promotionCodeId) {
+			promotionCode = await findPromotionCodeById(
+				appointmentPayload.promotionCodeId
+			);
+			taskPercentOff =
+				promotionCode.reduction / appointmentPayload.tasks.length;
+			console.log(promotionCode);
+			console.log(taskPercentOff);
+		}
 		const tasksIds = [];
-		for (task of appointmentPayload.tasks) {
+		for (let task of appointmentPayload.tasks) {
 			const taskId = await saveTask(
 				new Date(new Date(task.start).getTime() + 3 * 3_600_000),
 				task.serviceId,
-				task.employeeId
+				task.employeeId,
+				taskPercentOff
 			);
 			tasksIds.push(taskId);
 		}
@@ -36,10 +47,7 @@ async function saveAppointment(appointmentPayload) {
 			status: 0,
 			tasks: tasksIds,
 		});
-		if (appointmentPayload.promotionCodeId) {
-			const promotionCode = await findPromotionCodeById(
-				appointmentPayload.promotionCodeId
-			);
+		if (promotionCode) {
 			newAppointment.promotionCode = {
 				codeId: promotionCode._id,
 				code: promotionCode.code,
