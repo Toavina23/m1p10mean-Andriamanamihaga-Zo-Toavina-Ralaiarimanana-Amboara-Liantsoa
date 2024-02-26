@@ -12,14 +12,14 @@ const newServiceSchema = z.object({
     description: z.string().min(1),
     price: z.number().min(0), 
     duration: z.number().min(1),
-    employees: z.array().optional(),
+    employees: z.array(z.string()).optional(),
 })
 const updateServiceSchema = z.object({
     title: z.string().min(1).optional(),
     description: z.string().min(1).optional(),
     price: z.number().min(0).optional(),
     duration: z.number().min(1).optional(),
-    employees: z.array().optional().optional(),
+    employees: z.array(z.string()).optional(),
 })
 
 async function fetchServices(req, res, next) {

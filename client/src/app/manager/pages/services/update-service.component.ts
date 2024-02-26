@@ -1,12 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FloatingLabelComponent } from '../../components/floating-label.component';
-import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { environment } from '../../../../environments/environment';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { CardEmployeeComponent } from '../../components/card-employee.component';
+import { AddEmployeeComponent } from '../../components/add-employee.component';
 
 interface Service {
   title: string| null
@@ -21,10 +24,12 @@ interface Service {
   standalone: true,
   imports: [
     FloatingLabelComponent,
-    FormsModule,
+    ReactiveFormsModule,
     FontAwesomeModule,
     RouterModule,
-    CommonModule
+    CommonModule,
+    MatDialogModule,
+    CardEmployeeComponent
   ],
   template: `
     <div class="w-full bg-white rounded border">
@@ -34,31 +39,36 @@ interface Service {
         </button>
         <h1 class="text-lg">Mettre à jour le service</h1>
       </div>
-      <form (ngSubmit)="onSubmit()" class="p-6 grid grid-cols-6 gap-4">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-6 grid grid-cols-6 gap-4">
         <div class="col-span-3">
-          <input [(ngModel)]="form.title" name="title" type="text" placeholder="Titre" class="w-full p-3 border rounded">
+          <input formControlName="title" name="title" type="text" placeholder="Titre" class="w-full p-3 border rounded">
         </div>
         <div class="col-span-3">
-          <input [(ngModel)]="form.description" name="description" type="text" placeholder="Description" class="w-full p-3 border rounded">
+          <input formControlName="description" name="description" type="text" placeholder="Description" class="w-full p-3 border rounded">
         </div>
         <div class="col-span-3">
-          <input [(ngModel)]="form.duration" name="duration" type="number" placeholder="Durée (en minute)" class="w-full p-3 border rounded">
+          <input formControlName="duration" name="duration" type="number" placeholder="Durée (en minute)" class="w-full p-3 border rounded">
         </div>
         <div class="col-span-3">
-          <input [(ngModel)]="form.price" name="price" type="number" placeholder="Prix (en Ariary)" class="w-full p-3 border rounded">
+          <input formControlName="price" name="price" type="number" placeholder="Prix (en Ariary)" class="w-full p-3 border rounded">
         </div>
-        <div class="col-span-3 relative">
-          <select class="w-full bg-white p-3 border rounded">
-            <option [value]="null"></option>
-            <option *ngFor="let employee of employees" [value]="employee">{{ employee.firstname }} {{ employee.lastname }}</option>
-          </select>
-          <app-floating-label text="Employés"></app-floating-label>
+        <div class="col-span-3">
+          <div class="flex items-center space-x-3">
+            <div class="pt-3">
+                <p class="font-medium m-0">Employés</p>
+            </div>
+            <button type="button" (click)="openDialog()" class="btn">
+                + Ajouter
+            </button>
+          </div>
+          <div class="mt-6">
+            <app-card-employee *ngFor="let employee of formEmployeesDetails" [employee]="employee"></app-card-employee>
+          </div>
         </div>
         <div class="col-span-6 mt-6 flex justify-end">
           <button type="submit" [ngClass]="{ 'btn-bs-dark': true, 'opacity-30': loading }" >Enregistrer</button>
         </div>
       </form>
-      {{ form.employees }}
     </div>
   `,
   styles: ``
@@ -69,45 +79,64 @@ export class UpdateServiceComponent {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ){}
 
   faArrowLeft = faArrowLeft
   loading = false
   employees: any = []
-  selectedEmployee = null
 
-  form: Service = {
-    title: '',
-    description: '',
-    price: null,
-    duration: null,
-    employees: [],
-  }
+  form = this.fb.group({
+    title: [ null, [Validators.required]],
+    description: [ null, [Validators.required]],
+    price: [ null, [Validators.required]],
+    duration: [ null, [Validators.required]],
+    employees: [[]]
+  })
 
   ngOnInit() {
     this.http.get<any>(`${environment.serverUrl}/services/${this.id}`)
       .subscribe(res => {
         const { _id, __v, ...serviceDetails } = res
-        this.form = serviceDetails
+        this.form.setValue(serviceDetails)
       })
 
     this.http
       .get(`${environment.serverUrl}/employees`)
       .subscribe(res => {
         this.employees = res
-        this.form.employees.push(this.employees[0]._id)
       })
 
   }
 
+  openDialog() {
+    this.dialog.open(AddEmployeeComponent, {
+      panelClass: 'w-1/3',
+      data: {
+        employees: this.employees,
+        selectedEmployees: this.formEmployees
+      }
+    })
+  }
+
   onSubmit() {
     this.loading = true
-    this.http.put(`${environment.serverUrl}/services/${this.id}`, this.form)
+    this.http.put(`${environment.serverUrl}/services/${this.id}`, this.formValue)
         .subscribe({
           next: () => { this.router.navigate(['/manager/services']) },
           error: (err) => { console.log(err) },
           complete: () => { this.loading = false }
         })
+  }
+
+  get formValue() {
+    return this.form.value
+  }
+  get formEmployees(): any[] | null | undefined {
+    return this.form.get('employees')?.value
+  }
+  get formEmployeesDetails() {
+    return this.employees.filter((employee: any) => this.formEmployees?.includes(employee._id))
   }
 }
