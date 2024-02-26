@@ -11,6 +11,8 @@ import {
   Hourglass,
   GripVertical,
   Receipt,
+  Plus,
+  ChevronRight,
 } from 'lucide-angular';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -28,7 +30,9 @@ export const appConfig: ApplicationConfig = {
         UserRound,
         Hourglass,
         GripVertical,
-        Receipt
+        Receipt,
+        Plus,
+        ChevronRight
       })
     ),
     provideAnimationsAsync(),

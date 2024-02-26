@@ -16,6 +16,8 @@ import { ListServiceComponent } from './manager/pages/services/list-service.comp
 import { UpdateServiceComponent } from './manager/pages/services/update-service.component';
 import { EmployeeAdminComponent } from './employee/layouts/employee-admin.component';
 import { AppointmentsComponent } from './employee/pages/appointments.component';
+import { AppointmentLayoutComponent } from './customer/appointment-layout.component';
+import { AppointmentListComponent } from './customer/appointment-list.component';
 
 export const routes: Routes = [
   {
@@ -39,7 +41,18 @@ export const routes: Routes = [
       {
         path: 'appointments',
         title: 'Vos rendez vous',
-        component: AppointmentComponent,
+        component: AppointmentLayoutComponent,
+        children: [
+          {
+            path: 'new',
+            title: 'Nouveau rendez-vous',
+            component: AppointmentComponent,
+          },
+          {
+            path: '',
+            component: AppointmentListComponent,
+          },
+        ],
       },
       {
         path: 'preferences',
@@ -59,7 +72,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: BlankComponent
+        component: BlankComponent,
       },
       {
         path: '',
@@ -67,15 +80,15 @@ export const routes: Routes = [
         children: [
           {
             path: 'employees/new',
-            component: CreateEmployeeComponent
+            component: CreateEmployeeComponent,
           },
           {
             path: 'employees',
-            component: ListEmployeesComponent
+            component: ListEmployeesComponent,
           },
           {
             path: 'employees/:id',
-            component: UpdateEmployeeComponent
+            component: UpdateEmployeeComponent,
           },
           {
             path: 'services/new',

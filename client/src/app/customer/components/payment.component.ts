@@ -41,7 +41,7 @@ import { MatInputModule } from '@angular/material/input';
   template: `
     <form (submit)="processPayment()" [formGroup]="paymentElementForm">
       <div class="w-2/5 my-4">
-        <h1>Entrez vos informations de payement</h1>
+        <h2>Entrez vos informations de payement</h2>
         <div class="flex gap-4">
           <mat-form-field class="example-full-width" appearance="fill">
             <input matInput placeholder="name" formControlName="name" />
@@ -50,12 +50,14 @@ import { MatInputModule } from '@angular/material/input';
             <input matInput type="email" formControlName="email" />
           </mat-form-field>
         </div>
-        <mat-form-field class="example-full-width" appearance="fill">
-          <input matInput placeholder="Address" formControlName="address" />
-        </mat-form-field>
-        <mat-form-field class="example-full-width" appearance="fill">
-          <input matInput placeholder="ZIP Code" formControlName="zipcode" />
-        </mat-form-field>
+        <div class="flex gap-4">
+          <mat-form-field class="example-full-width" appearance="fill">
+            <input matInput placeholder="Address" formControlName="address" />
+          </mat-form-field>
+          <mat-form-field class="example-full-width" appearance="fill">
+            <input matInput placeholder="ZIP Code" formControlName="zipcode" />
+          </mat-form-field>
+        </div>
         <mat-form-field class="example-full-width" appearance="fill">
           <input matInput placeholder="city" formControlName="city" />
         </mat-form-field>
