@@ -1,30 +1,30 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FloatingLabelComponent } from '../components/floating-label.component';
+import { Component } from '@angular/core';
+import { FloatingLabelComponent } from '../../components/floating-label.component';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { Router, RouterModule } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-update-employee',
+  selector: 'app-create-employee',
   standalone: true,
   imports: [
     FloatingLabelComponent, 
+    ReactiveFormsModule, 
     FontAwesomeModule, 
     RouterModule,
-    ReactiveFormsModule,
     CommonModule
   ],
   template: `
     <div class="w-full bg-white rounded border">
       <div class="p-6 border-b flex justify-start items-center space-x-4">
         <button class="btn" routerLink="/manager/employees">
-          <fa-icon [icon]="returnIcon"></fa-icon>
+          <fa-icon [icon]="faArrowLeft"></fa-icon>
         </button>
-        <h1 class="text-lg">Mettre à jour les informations de l'employé</h1>
+        <h1 class="text-lg">Ajouter un nouvel employé</h1>
       </div>
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-6 grid grid-cols-6 gap-4">
         <div class="col-span-3">
@@ -57,15 +57,13 @@ import { CommonModule } from '@angular/common';
   `,
   styles: ``
 })
-export class UpdateEmployeeComponent implements OnInit {
+export class CreateEmployeeComponent {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private router: Router,
   ) {}
 
-  @Input() id: string = ''
-    
   form = this.fb.group({
     firstname: [ null, [Validators.required]],
     lastname: [ null, [Validators.required]],
@@ -76,20 +74,12 @@ export class UpdateEmployeeComponent implements OnInit {
     commission: [ null, [Validators.required]],
   })
   loading = false
-  returnIcon = faArrowLeft
-
-  ngOnInit(): void {
-    this.http.get<any>(`${environment.serverUrl}/employees/${this.id}`)
-      .subscribe(res => {
-        const { _id, verified, __v, role, ...employeeDetails } = res
-        this.form.setValue({...employeeDetails, ['password']: '', ['password_confirmation']: '', ['starting_day']: employeeDetails.starting_day.split('T')[0] })
-        console.log(this.form.value)
-      })
-  }
+  faArrowLeft = faArrowLeft
 
   onSubmit() {
+    // console.log(this.form.value)
     this.loading = true
-    this.http.put(`${environment.serverUrl}/employees/${this.id}`, this.form.value)
+    this.http.post(`${environment.serverUrl}/employees`, this.form.value)
         .subscribe({
           next: () => { this.router.navigate(['/manager/employees']) },
           error: (err) => { console.log(err) },

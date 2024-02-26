@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -38,7 +38,7 @@ import { CommonModule } from '@angular/common';
                 <button [routerLink]="['/manager/employees', employee._id]" class="btn-gray">
                   <fa-icon [icon]="updateIcon"></fa-icon>
                 </button>
-                <button [routerLink]="['/manager/employees', employee._id]" class="btn-danger">
+                <button (click)="deleteEmployee(employee._id)" [ngClass]="{ 'btn-danger': true, 'opacity-30': loading == employee._id }">
                   <fa-icon [icon]="deleteIcon"></fa-icon>
                 </button>
               </td>
@@ -53,11 +53,19 @@ export class ListEmployeesComponent implements OnInit {
   updateIcon = faPencilAlt
   deleteIcon = faTrash
   employees: any = []
+  loading = ''
 
   constructor(private http: HttpClient) {}
   ngOnInit(): void {
     this.http
       .get(`${environment.serverUrl}/employees`)
       .subscribe(res => this.employees = res)
+  }
+
+  deleteEmployee(id: string) {
+    this.loading = id
+    this.http
+      .delete(`${environment.serverUrl}/employees/${id}`)
+      .subscribe(() => { this.employees = this.employees.filter((employee: any) => employee._id != id) })
   }
 }
