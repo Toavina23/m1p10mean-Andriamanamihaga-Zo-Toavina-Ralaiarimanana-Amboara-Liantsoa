@@ -3,6 +3,7 @@ const { Appointment } = require("../models/appointment");
 const { saveTask } = require("./task.service");
 const userService = require("./user.service");
 const { findPromotionCodeById } = require("./promotionCode.service");
+const { Task } = require("../models/task");
 
 async function saveAppointment(appointmentPayload) {
 	try {
@@ -19,9 +20,6 @@ async function saveAppointment(appointmentPayload) {
 			);
 			tasksIds.push(taskId);
 		}
-		const promotionCode = await findPromotionCodeById(
-			appointmentPayload.promotionCodeId
-		);
 		const newAppointment = new Appointment({
 			client: {
 				clientId: client._id,
@@ -37,12 +35,17 @@ async function saveAppointment(appointmentPayload) {
 			),
 			status: 0,
 			tasks: tasksIds,
-			promotionCode: {
+		});
+		if (appointmentPayload.promotionCodeId) {
+			const promotionCode = await findPromotionCodeById(
+				appointmentPayload.promotionCodeId
+			);
+			newAppointment.promotionCode = {
 				codeId: promotionCode._id,
 				code: promotionCode.code,
 				reduction: promotionCode.reduction,
-			},
-		});
+			};
+		}
 		await newAppointment.save();
 	} catch (err) {
 		throw err;
