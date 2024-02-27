@@ -28,7 +28,7 @@ async function newEmployee(req, res, next) {
 
 async function getEmployees(req, res, next) {
     try {
-        const employees = await User.find({ role: { $eq: 'EMPLOYEE' } })
+        const employees = await User.find({ role: { $eq: 'EMPLOYEE' } }).select('-password')
         res.json(employees)
     } catch (err) {
         next(err)
@@ -37,7 +37,7 @@ async function getEmployees(req, res, next) {
 
 async function findEmployee(req, res, next) {
     try {
-        const employee = await User.findById(req.params.id)
+        const employee = await User.findById(req.params.id).select('-password')
         res.json(employee)
     } catch(err) {
         next(err)

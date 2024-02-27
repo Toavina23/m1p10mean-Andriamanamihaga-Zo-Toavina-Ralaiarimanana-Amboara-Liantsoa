@@ -15,9 +15,10 @@ import { CreateServiceComponent } from './manager/pages/services/create-service.
 import { ListServiceComponent } from './manager/pages/services/list-service.component';
 import { UpdateServiceComponent } from './manager/pages/services/update-service.component';
 import { EmployeeAdminComponent } from './employee/layouts/employee-admin.component';
-import { AppointmentsComponent } from './employee/pages/appointments.component';
 import { AppointmentLayoutComponent } from './customer/appointment-layout.component';
 import { AppointmentListComponent } from './customer/appointment-list.component';
+import { TasksComponent } from './employee/pages/tasks.component';
+import { ProfileComponent } from './employee/pages/profile.component';
 
 export const routes: Routes = [
   {
@@ -112,8 +113,12 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: AppointmentsComponent
-      }
+        component: TasksComponent
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent
+      },
     ]
   }
 ];

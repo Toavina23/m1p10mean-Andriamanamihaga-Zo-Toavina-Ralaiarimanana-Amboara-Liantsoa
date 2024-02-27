@@ -5,9 +5,7 @@ const {
 } = require("../services/appointment.service");
 
 const appointmentSchema = z.object({
-	startDate: z.string().refine((value) => {
-		return !isNaN(new Date(value).getTime());
-	}),
+	startDate: z.coerce.date(),
 	paymentId: z.string(),
 	amountPaid: z.number(),
 	tasks: z.array(
