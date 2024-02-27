@@ -4,9 +4,12 @@ const { findUserById } = require("./services/user.service");
 
 async function isAuthenticated(req, res, next) {
 	try {
+		if (!req.headers["authorization"]) {
+			throw new AppError(401, "Unauthorized", "Token required");
+		}
 		const token = req.headers["authorization"].split("Bearer ")[1];
 		if (!token) {
-			throw new AppError(401, "Unauthorized", "Token required");
+			throw new AppError(401, "Unauthorized", "Token invalid");
 		}
 		let decodedToken = undefined;
 		try {
