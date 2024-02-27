@@ -80,10 +80,15 @@ async function findAppointments(userId, filters) {
 			query["status"] = parseInt(status);
 		}
 		const appointments = await Appointment.find(query)
-			.skip()
+			.skip(skip)
 			.limit(pageSize)
+			.select(["amountPaid", "status", "startDate"])
 			.exec();
-		return appointments;
+		const totalCount = await Appointment.countDocuments(query);
+		return {
+			appointments: appointments,
+			totalCount: totalCount,
+		};
 	} catch (err) {
 		throw err;
 	}

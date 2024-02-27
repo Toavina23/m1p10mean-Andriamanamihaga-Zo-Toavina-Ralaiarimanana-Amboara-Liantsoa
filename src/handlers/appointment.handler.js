@@ -63,8 +63,14 @@ async function getUserAppointments(req, res, next) {
 		if (filters.pageSize == undefined) {
 			filters.pageSize = 10;
 		}
-		const appointments = await findAppointments(userId, filters);
-		return res.json(appointments);
+		const { appointments, totalCount } = await findAppointments(
+			userId,
+			filters
+		);
+		return res.json({
+			data: appointments,
+			totalCount: totalCount,
+		});
 	} catch (error) {
 		next(error);
 	}
