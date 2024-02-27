@@ -7,11 +7,9 @@ const mongoose = require("mongoose");
 const VALIDATION_CODE_TEMPLATE = require("../templates/validation_code_email_template");
 const { sendMail } = require("../services/email.service");
 
-async function findUser(email, password, role) {
-	const user = await User.findOne({
-		email: email,
-		role: role,
-	});
+async function findUser(authPayload) {
+	const { email, password } = authPayload;
+	const user = await User.findOne({ email });
 	if (user && bcrypt.compareSync(password, user.password)) {
 		return user;
 	}

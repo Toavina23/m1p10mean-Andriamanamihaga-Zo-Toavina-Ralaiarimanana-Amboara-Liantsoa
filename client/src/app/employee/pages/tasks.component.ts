@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TaskCardComponent } from '../components/task-card.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-tasks',
@@ -27,16 +28,16 @@ import { TaskCardComponent } from '../components/task-card.component';
   styles: ``
 })
 export class TasksComponent {
-  employeeId: string = '65cf0246deadd5d16b5aaa29'
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
+    
   tasks: any = []
   updateIcon = faPencilAlt
 
-  constructor(
-    private http: HttpClient
-  ) {}
-
   ngOnInit() {
-    this.http.get(`${environment.serverUrl}/tasks/employees/${this.employeeId}`)
+    this.http.get(`${environment.serverUrl}/tasks/employees/${this.authService.getUserId()}`)
         .subscribe((res) => { this.tasks = res })
   }
 
