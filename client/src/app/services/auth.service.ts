@@ -11,6 +11,7 @@ import { jwtDecode } from 'jwt-decode';
 type AuthenticationPayload = {
   username: string;
   token: string;
+  role: 'ADMIN' | 'EMPLOYEE' | 'CLIENT';
 };
 
 @Injectable({
@@ -19,6 +20,28 @@ type AuthenticationPayload = {
 export class AuthService {
   constructor(private http: HttpClient) {}
   clientAuthPayload: AuthenticationPayload | null = null;
+  authenticate(email: string, password: string) {
+    return this.http
+      .post<AuthenticationPayload>(
+        `${environment.serverUrl}/auth/login`,
+        {
+          email: email,
+          password: password
+        },
+        {
+          reportProgress: true,
+          observe: 'events',
+        }
+      )
+      .pipe(
+        tap((event) => {
+          if (event.type == HttpEventType.Response) {
+            this.savePayload(event.body!.token, event.body!.username, event.body!.role);
+          }
+        }),
+        catchError(this.handleError)
+      );
+  }
   authenticateClient(email: string, password: string) {
     return this.http
       .post<AuthenticationPayload>(
@@ -36,7 +59,7 @@ export class AuthService {
       .pipe(
         tap((event) => {
           if (event.type == HttpEventType.Response) {
-            this.savePayload(event.body!.token, event.body!.username);
+            this.savePayload(event.body!.token, event.body!.username, event.body!.role);
           }
         }),
         catchError(this.handleError)
@@ -81,7 +104,7 @@ export class AuthService {
       .pipe(
         tap((event) => {
           if (event.type == HttpEventType.Response) {
-            this.savePayload(event.body!.token, event.body!.username);
+            this.savePayload(event.body!.token, event.body!.username, event.body!.role);
           }
         }),
         catchError(this.handleError)
@@ -112,13 +135,26 @@ export class AuthService {
     return throwError(() => new Error(userMessage));
   }
 
-  private savePayload(token: string, username: string) {
+  private savePayload(token: string, username: string, role: 'ADMIN' | 'EMPLOYEE' | 'CLIENT') {
     localStorage.setItem('token', token);
     localStorage.setItem('username', username);
+    localStorage.setItem('role', role);
   }
 
+  logout() {
+    localStorage.clear()
+  }
   getToken() {
     return localStorage.getItem('token');
+  }
+  getUserRole() {
+    try {
+      const decodedToken = this.decodeAuthToken();
+      return decodedToken.role;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
   customerSessionValid() {
     return !this.tokenExpired();
@@ -132,7 +168,7 @@ export class AuthService {
       const decodedToken = jwtDecode(token) as {
         userId: string;
         email: string;
-        role: 'CLIENT';
+        role: 'ADMIN' | 'EMPLOYEE' | 'CLIENT';
         exp: number;
       };
       return decodedToken;

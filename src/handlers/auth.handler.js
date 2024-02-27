@@ -72,16 +72,12 @@ async function confirmUserEmail(req, res, next) {
 const authenticationSchema = z.object({
 	email: z.string().min(1).email(),
 	password: z.string().min(8),
-	role: z.enum(["ADMIN", "EMPLOYEE", "CLIENT"]),
+	role: z.enum(["ADMIN", "EMPLOYEE", "CLIENT"]).optional(),
 });
 async function authenticate(req, res, next) {
 	try {
 		const authenticationInfo = authenticationSchema.parse(req.body);
-		const user = await findUser(
-			authenticationInfo.email,
-			authenticationInfo.password,
-			authenticationInfo.role
-		);
+		const user = await findUser(authenticationInfo);
 		if (!user) {
 			throw new AppError(
 				401,
@@ -95,6 +91,7 @@ async function authenticate(req, res, next) {
 		const token = generateUserToken(user);
 		res.status(200).json({
 			username: `${user.firstname} ${user.lastname}`,
+			role: user.role,
 			token: token,
 		});
 	} catch (err) {

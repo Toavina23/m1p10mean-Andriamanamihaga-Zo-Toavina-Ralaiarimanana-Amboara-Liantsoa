@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [],
+  imports: [FontAwesomeModule, RouterModule],
   template: `
     <!-- start navbar -->
     <div class="md:w-full md:sticky flex flex-row flex-wrap items-center bg-white p-6 border-b">
@@ -15,11 +18,20 @@ import { Component } from '@angular/core';
         </div>
         <!-- end logo -->   
         
+        <!-- logout -->
+        <a 
+          routerLink="/logout"
+          class="flex items-center mb-3 capitalize font-medium text-sm cursor-pointer hover:text-teal-600 transition ease-in-out duration-500"
+        >
+          <fa-icon [icon]="faSignOut" class="text-lg mr-2"></fa-icon>
+          Se déconnecter
+        </a>
+        <!-- end logout -->
       </div>
     <!-- end navbar -->
   `,
   styles: ``
 })
 export class NavbarComponent {
-
+  faSignOut = faSignOutAlt
 }

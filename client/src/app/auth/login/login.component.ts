@@ -30,7 +30,7 @@ export class LoginComponent implements OnDestroy, OnInit {
     this.error = '';
     console.log(this.loginForm);
     this.authenticationSubscription = this.authService
-      .authenticateClient(
+      .authenticate(
         this.email?.getRawValue(),
         this.password?.getRawValue()
       )
@@ -40,7 +40,18 @@ export class LoginComponent implements OnDestroy, OnInit {
             this.loading = true;
           } else if (event?.type == HttpEventType.Response) {
             this.loading = false;
-            this.router.navigate(['/customer']);
+            switch (localStorage.getItem('role')) {
+              case 'CLIENT':
+                this.router.navigate(['/customer']);
+                break;
+              case 'EMPLOYEE':
+                this.router.navigate(['/employee']);
+                break;
+              default:
+                this.router.navigate(['/manager/employees']);
+                break;
+            }
+            // this.router.navigate(['/customer']);
           }
         },
         error: (error) => {

@@ -11,6 +11,13 @@ const userSchema = new Schema({
 	role: { type: String, required: true, enum: ["ADMIN", "EMPLOYEE", "CLIENT"] },
 });
 
+userSchema.statics.findOneOrCreate = function (condition, callback) {
+    const self = this
+    self.findOne(condition, (err, result) => {
+        return result ? callback(err, result) : self.create(condition, (err, result) => { return callback(err, result) })
+    })
+}
+
 const User = model("user", userSchema);
 exports.User = User;
 exports.UserSchema = userSchema;

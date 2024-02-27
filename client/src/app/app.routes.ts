@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './auth/login/login.component';
 import { CustomerComponent } from './customer/customer.component';
 import { SignupComponent } from './auth/signup/signup.component';
-import { authGuard } from './auth.guard';
+import { authGuard } from './guards/auth.guard';
 import { ManagerComponent } from './manager/layouts/manager.component';
 import { BlankComponent } from './manager/layouts/blank.component';
 import { AdminComponent } from './manager/layouts/admin.component';
@@ -15,9 +15,12 @@ import { CreateServiceComponent } from './manager/pages/services/create-service.
 import { ListServiceComponent } from './manager/pages/services/list-service.component';
 import { UpdateServiceComponent } from './manager/pages/services/update-service.component';
 import { EmployeeAdminComponent } from './employee/layouts/employee-admin.component';
-import { AppointmentsComponent } from './employee/pages/appointments.component';
 import { AppointmentLayoutComponent } from './customer/appointment-layout.component';
 import { AppointmentListComponent } from './customer/appointment-list.component';
+import { TasksComponent } from './employee/pages/tasks.component';
+import { ProfileComponent } from './employee/pages/profile.component';
+import { rolesGuard } from './guards/roles.guard';
+import { LogoutComponent } from './auth/logout.component';
 
 export const routes: Routes = [
   {
@@ -29,9 +32,15 @@ export const routes: Routes = [
     component: SignupComponent,
   },
   {
+    path: 'logout',
+    component: LogoutComponent,
+    canActivate: [authGuard]
+  },
+  {
     path: 'customer',
     component: CustomerComponent,
-    canActivate: [authGuard],
+    canActivate: [authGuard, rolesGuard],
+    data: { role: 'CLIENT' },
     children: [
       {
         path: '',
@@ -69,6 +78,8 @@ export const routes: Routes = [
   {
     path: 'manager',
     component: ManagerComponent,
+    canActivate: [authGuard, rolesGuard],
+    data: { role: 'ADMIN' },
     children: [
       {
         path: '',
@@ -109,11 +120,17 @@ export const routes: Routes = [
   {
     path: 'employee',
     component: EmployeeAdminComponent,
+    canActivate: [authGuard, rolesGuard],
+    data: { role: 'EMPLOYEE' },
     children: [
       {
         path: '',
-        component: AppointmentsComponent
-      }
+        component: TasksComponent
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent
+      },
     ]
   }
 ];
