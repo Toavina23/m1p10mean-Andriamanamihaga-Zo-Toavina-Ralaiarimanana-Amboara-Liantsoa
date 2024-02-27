@@ -2,7 +2,7 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   LucideAngularModule,
   Bookmark,
@@ -13,16 +13,18 @@ import {
   Receipt,
   Plus,
   ChevronRight,
+  EyeIcon,
 } from 'lucide-angular';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { provideNgxStripe } from 'ngx-stripe';
 import { environment } from '../environments/environment';
+import { AuthInterceptorFunction } from './auth-interceptor.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([AuthInterceptorFunction])),
     importProvidersFrom(
       LucideAngularModule.pick({
         Bookmark,
@@ -32,7 +34,8 @@ export const appConfig: ApplicationConfig = {
         GripVertical,
         Receipt,
         Plus,
-        ChevronRight
+        ChevronRight,
+        EyeIcon
       })
     ),
     provideAnimationsAsync(),

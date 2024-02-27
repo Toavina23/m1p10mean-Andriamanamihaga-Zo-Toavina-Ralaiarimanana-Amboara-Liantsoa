@@ -24,6 +24,18 @@ export type NewTask = {
   employeeId: string;
   employeeFullName: string;
 };
+enum UserAppointmentStatus {
+  Pending = 0,
+  Completed = 1,
+  Failed = 2,
+}
+
+export type UserAppointment = {
+  _id: string;
+  startDate: Date;
+  status: UserAppointmentStatus;
+  amountPaid: number;
+};
 @Injectable({
   providedIn: 'root',
 })
@@ -162,6 +174,7 @@ export class AppointmentService implements OnDestroy {
     });
     this.newTasks = simulationArray;
   }
+
   get getNewTasks() {
     return this.newTasks;
   }
@@ -193,5 +206,27 @@ export class AppointmentService implements OnDestroy {
   }
   public clearNewTasks() {
     this.newTasks = [];
+  }
+
+  public getUserAppointments(filter: {
+    dateTo?: Date;
+    dateFrom?: Date;
+    status?: number;
+    pageSize?: number;
+    page?: number;
+  }) {
+    const searchParam = new URLSearchParams();
+    Object.entries(filter).forEach(([key, value]) => {
+      if (value instanceof Date) {
+        searchParam.set(key, value.toISOString().slice(0, 16));
+      } else if (typeof value == 'number') {
+        searchParam.set(key, value.toString());
+      }
+    });
+    return this.http
+      .get<{ data: UserAppointment[]; totalCount: number }>(
+        `${environment.serverUrl}/appointments?${searchParam.toString()}`
+      )
+      .pipe(catchError(this.handleError));
   }
 }
