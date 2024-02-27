@@ -3,9 +3,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
-  SimpleChange,
   SimpleChanges,
   ViewChild,
   signal,
@@ -23,7 +21,10 @@ import {
   StripePaymentElementOptions,
 } from '@stripe/stripe-js';
 import { MatButtonModule } from '@angular/material/button';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormGroup,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
@@ -88,25 +89,15 @@ export class PaymentComponent implements OnChanges {
   @ViewChild(StripePaymentElementComponent)
   elements!: StripePaymentElementComponent;
   @Output() paymentId = new EventEmitter<string>();
+  @Input() paymentElementForm!: FormGroup;
   loading = true;
   stripe: StripeServiceInterface = injectStripe(environment.stripePublicKey);
   elementOptions: StripeElementsOptions = {
     locale: 'auto',
   };
   paying = signal(false);
-  constructor(
-    private paymentService: PaymentService,
-    private fb: FormBuilder
-  ) {}
+  constructor(private paymentService: PaymentService) {}
   @Input() amount: number | undefined;
-  paymentElementForm = this.fb.group({
-    name: ['John doe', [Validators.required]],
-    email: ['zotoavina.andria@gmail.com', [Validators.required]],
-    address: ['MB 406 mahabo'],
-    zipcode: ['102'],
-    city: ['Antananarivo'],
-    amount: [2500, [Validators.required, Validators.pattern(/d+/)]],
-  });
   paymentElementOptions: StripePaymentElementOptions = {
     layout: {
       type: 'tabs',
@@ -115,7 +106,7 @@ export class PaymentComponent implements OnChanges {
     defaultValues: {},
   };
   ngOnChanges(changes: SimpleChanges) {
-    if (!changes['amount']) {
+    if (!changes['amount'] || this.amount == 0) {
       return;
     }
     this.paymentService

@@ -1,10 +1,10 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { validateAppointmentDate } from '../appointment.validaton';
 import { LucideAngularModule } from 'lucide-angular';
 import { TaskComponent } from '../components/taks/task.component';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
-import { Service, Task } from '../../types';
+import { Task } from '../../types';
 import { NewTaskComponent } from '../components/new-task/new-task.component';
 import { MatButtonModule } from '@angular/material/button';
 import { AppointmentService } from '../../services/appointment.service';
@@ -14,6 +14,7 @@ import { PaymentService } from '../../services/payment.service';
 import { HttpEventType } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
+import { MatStepperModule } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-appointment',
@@ -27,6 +28,7 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     PaymentComponent,
     MatInputModule,
+    MatStepperModule,
   ],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css',
@@ -57,6 +59,15 @@ export class AppointmentComponent {
     },
     { validators: [validateAppointmentDate] }
   );
+  paymentElementForm = this.fb.group({
+    name: ['John doe', [Validators.required]],
+    email: ['zotoavina.andria@gmail.com', [Validators.required]],
+    address: ['MB 406 mahabo'],
+    zipcode: ['102'],
+    city: ['Antananarivo'],
+    amount: [2500, [Validators.required, Validators.pattern(/d+/)]],
+  });
+
   openDialog() {
     this.dialog.open(NewTaskComponent, {
       data: {
@@ -69,9 +80,7 @@ export class AppointmentComponent {
 
   onSubmit() {
     console.log(this.appointmentDate?.getRawValue());
-    console.log('submit');
     this.paymentService.generatePaymentIntent(this.billAmount);
-    this.step = 'checkout';
     this.error = '';
   }
 
@@ -113,7 +122,7 @@ export class AppointmentComponent {
             if (result.status == 201) {
               this.appointmentService.clearNewTasks();
               this.appointmentDate?.setValue(
-                new Date(Date.now() + 4 * 3600 * 1000)
+                new Date(Date.now() + 3 * 3600 * 1000)
                   .toISOString()
                   .slice(0, 16)
               );
