@@ -59,6 +59,36 @@ async function saveAppointment(appointmentPayload) {
 		throw err;
 	}
 }
+
+async function findAppointments(userId, filters) {
+	try {
+		const { dateTo, dateFrom, status, page, pageSize } = filters;
+		const skip = (page - 1) * pageSize;
+		const query = {};
+		query["client.clientId"] = userId;
+		if (dateTo) {
+			query["startDate"] = query["startDate"] || {};
+			const date = new Date(dateTo).getTime() + 3 * 3_600_000;
+			query["startDate"].$lte = date;
+		}
+		if (dateFrom) {
+			query["startDate"] = query["startDate"] || {};
+			const date = new Date(dateFrom).getTime() + 3 * 3_600_000;
+			query["startDate"].$gte = date;
+		}
+		if (status) {
+			query["status"] = parseInt(status);
+		}
+		const appointments = await Appointment.find(query)
+			.skip()
+			.limit(pageSize)
+			.exec();
+		return appointments;
+	} catch (err) {
+		throw err;
+	}
+}
 module.exports = {
 	saveAppointment,
+	findAppointments,
 };

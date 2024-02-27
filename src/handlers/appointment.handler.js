@@ -1,5 +1,8 @@
 const z = require("zod");
-const { saveAppointment } = require("../services/appointment.service");
+const {
+	saveAppointment,
+	findAppointments,
+} = require("../services/appointment.service");
 
 const appointmentSchema = z.object({
 	startDate: z.string().refine((value) => {
@@ -31,4 +34,39 @@ async function createNewAppointment(req, res, next) {
 		next(err);
 	}
 }
-module.exports = { createNewAppointment };
+
+const userAppointmentSchema = z.object({
+	dateFrom: z.union([
+		z.undefined(),
+		z.string().refine((value) => {
+			return !isNaN(new Date(value).getTime());
+		}),
+	]),
+	dateTo: z.union([
+		z.undefined(),
+		z.string().refine((value) => {
+			return !isNaN(new Date(value).getTime());
+		}),
+	]),
+	status: z.union([z.undefined(), z.string()]),
+	page: z.union([z.undefined(), z.string()]),
+	pageSize: z.union([z.undefined(), z.string()]),
+});
+
+async function getUserAppointments(req, res, next) {
+	try {
+		const userId = req.user.id;
+		const filters = userAppointmentSchema.parse(req.query);
+		if (filters.page == undefined) {
+			filters.page = 1;
+		}
+		if (filters.pageSize == undefined) {
+			filters.pageSize = 10;
+		}
+		const appointments = await findAppointments(userId, filters);
+		return res.json(appointments);
+	} catch (error) {
+		next(error);
+	}
+}
+module.exports = { createNewAppointment, getUserAppointments };
