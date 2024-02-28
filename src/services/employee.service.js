@@ -2,16 +2,36 @@ const { Service } = require("../models/services");
 const { Task } = require("../models/task");
 const { User } = require("../models/user");
 
+const DAY_OF_WEEK = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
+
 async function findEmployeeForService(serviceId, startDate) {
 	const gmtPlus3Offset = 3 * 60 * 60 * 1000;
 	const start = new Date(startDate).getTime() + gmtPlus3Offset;
-	const { duration } = await Service.findById(serviceId);
-	const employees = await User.find({ role: "EMPLOYEE" }).exec();
+	const { duration, employees } = await Service.findById(serviceId).populate('employees');
 
-	const employeesAvailability = employees.map((employee) => ({
+	var employeesAvailability = employees.filter((employee) => {
+		const day = DAY_OF_WEEK[new Date(startDate).getDay()]
+		if(employee.schedule[day] && employee.schedule[day]['startTime'] && employee.schedule[day]['endTime']) {
+			const { startTime, endTime } = employee.schedule[day]
+			const [ startHour, startMinute ] = startTime.split(':')
+			const [ endHour, endMinute ] = endTime.split(':')
+			var startDay = new Date(startDate)
+			var endDay = new Date(startDate)
+			startDay.setHours(parseInt(startHour), parseInt(startMinute))
+			endDay.setHours(parseInt(endHour), parseInt(endMinute))
+			startDay = startDay.getTime() + gmtPlus3Offset
+			endDay = endDay.getTime() + gmtPlus3Offset
+			if(start < startDay || start > endDay) console.log('----------TSY ANATY HORAIRE-----------')
+			return start >= startDay && start <= endDay
+		}
+		return false
+	});
+
+	employeesAvailability = employeesAvailability.map((employee) => ({
 		employeeId: employee._id,
 		firstname: employee.firstname,
 		lastname: employee.lastname,
+		schedule: employee.schedule,
 		availableIn: 0,
 	}));
 
@@ -21,7 +41,7 @@ async function findEmployeeForService(serviceId, startDate) {
 	})
 		.populate("employeeId")
 		.exec();
-	console.log(tasks);
+	// console.log(tasks);
 	tasks.forEach((task) => {
 		const taskEndTime = new Date(task.startTime.getTime() + duration * 60000);
 		console.log(taskEndTime);
