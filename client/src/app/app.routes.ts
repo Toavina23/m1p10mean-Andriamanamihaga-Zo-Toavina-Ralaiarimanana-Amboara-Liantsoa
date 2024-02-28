@@ -21,11 +21,21 @@ import { TasksComponent } from './employee/pages/tasks.component';
 import { ProfileComponent } from './employee/pages/profile.component';
 import { rolesGuard } from './guards/roles.guard';
 import { LogoutComponent } from './auth/logout.component';
+import { ManagerLoginComponent } from './manager/pages/login/login.component';
+import { EmployeeLoginComponent } from './employee/pages/login/login.component';
 
 export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'manager/login',
+    component: ManagerLoginComponent
+  },
+  {
+    path: 'employee/login',
+    component: EmployeeLoginComponent
   },
   {
     path: 'signup',

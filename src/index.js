@@ -12,6 +12,7 @@ const {
 } = require("./handlers/error.handler");
 // script to automaticaly create admin user
 require('./mongodb/init/create-manager')
+require('./mongodb/init/create-employee')
 const path = require("path");
 
 // app bootstrap

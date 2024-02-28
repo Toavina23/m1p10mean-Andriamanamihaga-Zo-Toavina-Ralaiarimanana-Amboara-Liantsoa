@@ -24,7 +24,7 @@ import { AuthService } from '../../services/auth.service';
       </div>
       <div class="flex justify-between">
         <h2> Horaires : </h2>
-        <button (click)="openDialog()" class="btn-gray !border-0">
+        <button (click)="openDialog()" class="btn">
           Gérer les horaires
         </button>
       </div>
