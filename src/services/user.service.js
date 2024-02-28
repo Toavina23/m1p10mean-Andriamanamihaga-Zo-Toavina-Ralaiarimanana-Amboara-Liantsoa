@@ -103,7 +103,7 @@ async function hashUserPassword(password) {
 	}
 }
 
-const TOKEN_DURATION = 3600;
+const TOKEN_DURATION = 3600 * 3;
 function generateUserToken(user) {
 	const token = jwt.sign(
 		{
