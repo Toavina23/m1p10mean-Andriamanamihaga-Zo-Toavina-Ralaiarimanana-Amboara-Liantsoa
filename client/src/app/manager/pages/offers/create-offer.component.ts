@@ -35,7 +35,7 @@ import { AuthService } from '../../../services/auth.service';
           <input formControlName="reduction" type="number" placeholder="réduction (en %)" min="0" class="w-full p-3 border rounded">
         </div>
         <div class="col-span-3 relative">
-            <input formControlName="endDate" type="date" class="w-full p-3 border rounded"/>
+            <input formControlName="endDate" type="date" min="{{ today }}" class="w-full p-3 border rounded"/>
             <app-floating-label text="Fin de validité"></app-floating-label>
         </div>
         <div class="col-span-6 mt-6 flex justify-end">
@@ -75,5 +75,9 @@ export class CreateOfferComponent {
           error: (err) => { console.log(err) },
           complete: () => { this.loading = false }
         })
+  }
+
+  get today() {
+    return new Date().toISOString().split('T')[0]
   }
 }
