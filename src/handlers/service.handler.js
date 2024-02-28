@@ -48,6 +48,7 @@ async function getEmployeeAvailableForService(req, res, next) {
 		next(err);
 	}
 }
+
 async function newService(req, res, next) {
     try {
         const newServiceInfo = newServiceSchema.parse(req.body)
