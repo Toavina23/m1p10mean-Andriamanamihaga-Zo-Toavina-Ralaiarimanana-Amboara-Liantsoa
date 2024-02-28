@@ -22,7 +22,7 @@
     "@angular/router": "^17.1.0",
     "@fortawesome/angular-fontawesome": "^0.14.1",
     "@fortawesome/fontawesome-svg-core": "~1.2.36",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@stripe/stripe-js": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "lucide-angular": "^0.321.0",
