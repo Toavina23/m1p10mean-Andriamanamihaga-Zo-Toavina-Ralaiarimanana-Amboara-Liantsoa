@@ -13,7 +13,7 @@ import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
           
         <!-- logo -->
         <div class="flex-none w-56 flex flex-row items-center">
-          <img src="/assets/logo.jpg" class="w-10 flex-none">
+          <img src="/assets/logo.png" class="w-10 flex-none">
           <strong class="capitalize ml-1 flex-1">Beauty salon Employees</strong>
         </div>
         <!-- end logo -->   
