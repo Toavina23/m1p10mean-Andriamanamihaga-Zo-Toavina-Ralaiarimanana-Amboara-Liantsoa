@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleFormComponent } from '../components/schedule-form.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -27,55 +28,47 @@ import { ScheduleFormComponent } from '../components/schedule-form.component';
           Gérer les horaires
         </button>
       </div>
-      <div class="grid grid-cols-6 gap-4">
-        <div class="col-start-1 col-span-2 alert">
-          <span class="font-semibold">Lundi :</span> 08:00 - 17:00
+      <div *ngIf="employee" class="grid grid-cols-6 gap-4">
+        <div *ngFor="let day of daysOfWeek" class="col-start-1 col-span-2 alert">
+          <span class="font-semibold mr-2">{{ day }} :</span> 
+          {{ schedule[day] ? schedule[day]['startTime'] : '...' }} - {{ schedule[day] ? schedule[day]['endTime'] : '...' }}
         </div>
-        <div class="col-span-2 alert">
-          <span class="font-semibold">Mardi :</span> 08:00 - 17:00
-        </div>
-        <div class="col-start-1 col-span-2 alert">
-          <span class="font-semibold">Mercredi :</span> 08:00 - 17:00
-        </div>
-        <div class="col-span-2 alert">
-          <span class="font-semibold">Jeudi :</span> 08:00 - 17:00
-        </div>
-        <div class="col-start-1 col-span-2 alert">
-          <span class="font-semibold">Vendredi :</span> 08:00 - 17:00
-        </div>
-        <div class="col-span-2 alert">
-          <span class="font-semibold">Samedi :</span> 08:00 - 13:00
-        </div>
-        <div class="col-start-1 col-span-2 alert">
-          <span class="font-semibold">Dimanche :</span>
-        </div>
-        
       </div>
     </div>
   `,
   styles: ``
 })
 export class ProfileComponent {
-  employeeId: string = '65cf0246deadd5d16b5aaa29'
+  daysOfWeek = [ 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche' ]
   employee: any = null
 
   constructor(
     private http: HttpClient,
+    private authService: AuthService,
     private dialog: MatDialog
   ) {}
 
   ngOnInit() {
-    this.http.get(`${environment.serverUrl}/employees/${this.employeeId}`)
+    this.http.get(`${environment.serverUrl}/employees/${this.authService.getUserId()}`)
         .subscribe((res) => { this.employee = res })
   }
 
   openDialog() {
     this.dialog.open(ScheduleFormComponent, {
-      panelClass: 'w-1/3'
+      panelClass: 'w-1/3',
+      data: {
+        employee: this.employee
+      }
     })
   }
 
   get startingDay() {
     return new Date(this.employee?.starting_day).toLocaleDateString('fr-FR')
+  }
+
+  get schedule() {
+    if(this.employee.schedule) return this.employee.schedule 
+    this.employee.schedule = {}
+    return this.employee.schedule
   }
 }
