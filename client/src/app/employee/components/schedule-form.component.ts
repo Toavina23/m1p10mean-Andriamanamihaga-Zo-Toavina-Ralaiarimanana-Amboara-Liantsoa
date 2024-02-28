@@ -23,7 +23,7 @@ import { environment } from '../../../environments/environment';
           </select>
           <select [(ngModel)]="scheduleForm[day]['endTime']" class="flex-1 p-3 border rounded outline-none">
             <option value="">...</option>
-            <option *ngFor="let hour of hoursOfDay" [value]="hour">{{ hour }}</option>
+            <option *ngFor="let hour of onlyAfter(scheduleForm[day]['startTime'])" [value]="hour">{{ hour }}</option>
           </select>
         </div>
       </div>
@@ -103,6 +103,15 @@ export class ScheduleFormComponent {
         filteredSchedule[key] = daySchedule
     })
     return filteredSchedule
+  }
+  onlyAfter(time: string) {
+    if(this.blankHour(time)) return this.hoursOfDay
+    let found = false
+    const afterTime = this.hoursOfDay.filter((hour) => {
+      if(hour == time) found = true
+      return found
+    })
+    return afterTime
   }
 
   get currentSchedule() {
