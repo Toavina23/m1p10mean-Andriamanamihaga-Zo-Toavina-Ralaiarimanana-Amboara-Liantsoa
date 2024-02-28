@@ -1,3 +1,4 @@
+const { MongooseError } = require("mongoose");
 const { Task } = require("../models/task");
 const { getServiceById } = require("./service.service");
 const { findUserById } = require("./user.service");
@@ -20,7 +21,17 @@ async function saveTask(startTime, serviceId, employeeId, taskPercentOff) {
 		throw err;
 	}
 }
-
+async function findTaskDetails(taskId) {
+	try {
+		const taskDetails = Task.findById(taskId)
+			.populate("service", "duration title")
+			.populate("employeeId", "firstname fullname");
+		return taskDetails;
+	} catch (err) {
+		throw err;
+	}
+}
 module.exports = {
 	saveTask,
+	findTaskDetails,
 };

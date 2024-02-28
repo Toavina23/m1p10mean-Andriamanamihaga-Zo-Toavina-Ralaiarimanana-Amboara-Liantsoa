@@ -28,6 +28,8 @@ import {
 } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { LucideAngularModule } from 'lucide-angular';
+import { MatDialog } from '@angular/material/dialog';
+import { AppointmentDetailsComponent } from './components/appointment-details.component';
 
 @Component({
   selector: 'app-appointment-list',
@@ -129,7 +131,7 @@ import { LucideAngularModule } from 'lucide-angular';
             <button
               mat-icon-button
               color="primary"
-              (click)="onViewAppointmentDetails(element._id)"
+              (click)="openDialog(element._id)"
             >
               <lucide-icon name="eye-icon"></lucide-icon>
             </button>
@@ -154,7 +156,8 @@ export class AppointmentListComponent
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   constructor(
     private appointmentService: AppointmentService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public dialog: MatDialog
   ) {}
   ngOnInit(): void {
     this.getAppointments();
@@ -176,6 +179,15 @@ export class AppointmentListComponent
     dateFrom: [null],
     status: [-1],
   });
+
+  openDialog(id: string) {
+    this.dialog.open(AppointmentDetailsComponent, {
+      data: {
+        appointmentId: id,
+      },
+      panelClass: ['w-1/2', 'h-4/5'],
+    });
+  }
 
   getAppointments() {
     const filters = {} as {
@@ -212,9 +224,6 @@ export class AppointmentListComponent
   onReset() {
     this.filterForm.reset();
     this.getAppointments();
-  }
-  onViewAppointmentDetails(id: string) {
-    alert(id);
   }
 
   formatDate(dateString: string) {
