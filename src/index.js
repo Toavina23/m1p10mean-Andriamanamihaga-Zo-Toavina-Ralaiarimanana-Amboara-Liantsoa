@@ -10,6 +10,8 @@ const {
 	validationError,
 	appError,
 } = require("./handlers/error.handler");
+// script to automaticaly create admin user
+require('./mongodb/init/create-manager')
 const path = require("path");
 
 // app bootstrap
