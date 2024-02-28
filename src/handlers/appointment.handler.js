@@ -2,7 +2,9 @@ const z = require("zod");
 const {
 	saveAppointment,
 	findAppointments,
+	findAppointmentDetails,
 } = require("../services/appointment.service");
+const { AppError } = require("../app_error");
 
 const appointmentSchema = z.object({
 	startDate: z.coerce.date(),
@@ -74,4 +76,21 @@ async function getUserAppointments(req, res, next) {
 		next(error);
 	}
 }
-module.exports = { createNewAppointment, getUserAppointments };
+const appointmentDetailSchema = z.string().min(1);
+async function getAppointmentDetails(req, res, next) {
+	try {
+		const appointmentId = appointmentDetailSchema.parse(req.params.id);
+		const appointmentDetails = await findAppointmentDetails(appointmentId);
+		if (!appointmentDetails) {
+			throw new AppError(400, "Bad request", "Rendez-vous inconnu");
+		}
+		return res.json(appointmentDetails);
+	} catch (error) {
+		next(error);
+	}
+}
+module.exports = {
+	createNewAppointment,
+	getUserAppointments,
+	getAppointmentDetails,
+};

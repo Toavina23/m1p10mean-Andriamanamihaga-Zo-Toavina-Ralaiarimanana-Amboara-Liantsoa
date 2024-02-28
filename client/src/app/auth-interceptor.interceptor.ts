@@ -2,10 +2,15 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { AuthService } from './services/auth.service';
 
-const urlsToAddToken = ['/api/appointments', '/api/services', '/api/payments/paymentIntents'];
+const urlsToAddToken = [
+  '/api/appointments',
+  '/api/services',
+  '/api/payments/paymentIntents',
+];
 const regexUrlsToAddToken = [
   /^\/api\/services\/[^\/]+\/employees$/, // Regex to match /services/:id/employees
-  /^\/api\/promotionCodes\/[A-Za-z0-9]*$/ // Regex to match /promotionCodes/:code
+  /^\/api\/promotionCodes\/[A-Za-z0-9]*$/, // Regex to match /promotionCodes/:code
+  /^\/api\/appointments\/[A-Za-z0-9]*$/, // Regex to match /appointments/:code
 ];
 
 export const AuthInterceptorFunction: HttpInterceptorFn = (req, next) => {

@@ -10,6 +10,7 @@ import { Subscription, catchError, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { AuthService } from './auth.service';
+import { Appointment } from '../customer/components/appointment-details.component';
 
 export type EmployeeAvailability = {
   employeeId: string;
@@ -43,11 +44,7 @@ export class AppointmentService implements OnDestroy {
   services: Service[] = [];
   private newTasks: NewTask[] = [];
   serviceFetchSubscription: Subscription | undefined;
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private authService: AuthService
-  ) {
+  constructor(private http: HttpClient, private router: Router) {
     this.serviceFetchSubscription = this.getAllService().subscribe();
   }
   ngOnDestroy() {
@@ -98,7 +95,14 @@ export class AppointmentService implements OnDestroy {
       )
       .pipe(catchError(this.handleError));
   }
-
+  public getAppointmentDetails(id: string) {
+    return this.http
+      .get<Appointment>(`${environment.serverUrl}/appointments/${id}`, {
+        reportProgress: true,
+        observe: 'events',
+      })
+      .pipe(catchError(this.handleError));
+  }
   public getAllService() {
     return this.http
       .get<{ services: Service[] }>(`${environment.serverUrl}/services`, {
