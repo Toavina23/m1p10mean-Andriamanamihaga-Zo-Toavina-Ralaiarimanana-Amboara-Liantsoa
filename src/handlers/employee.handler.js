@@ -13,38 +13,38 @@ const dayScheduleSchema = z.object({
 	}),
 });
 const scheduleSchema = z.object({
-	Lundi: dayScheduleSchema.optional(),
-	Mardi: dayScheduleSchema.optional(),
-	Mercredi: dayScheduleSchema.optional(),
-	Jeudi: dayScheduleSchema.optional(),
-	Vendredi: dayScheduleSchema.optional(),
-	Samedi: dayScheduleSchema.optional(),
-	Dimanche: dayScheduleSchema.optional(),
-});
-const employeeInfoSchema = z
-	.object({
-		firstname: z.string().min(1),
-		lastname: z.string(),
-		email: z.string().min(1).email(),
-		password: z.string().min(8),
-		password_confirmation: z.string().min(8),
-		starting_day: z.coerce.date(),
-		commission: z.number().min(0).max(100),
-	})
-	.refine((data) => data.password === data.password_confirmation, {
-		message: "Passwords don't match",
-		path: ["password_confirmation"],
-	});
+    Lundi: dayScheduleSchema.optional(),
+    Mardi: dayScheduleSchema.optional(),
+    Mercredi: dayScheduleSchema.optional(),
+    Jeudi: dayScheduleSchema.optional(),
+    Vendredi: dayScheduleSchema.optional(),
+    Samedi: dayScheduleSchema.optional(),
+    Dimanche: dayScheduleSchema.optional()
+})
+const employeeInfoSchema = z.object({
+	firstname: z.string().min(1),
+	lastname: z.string(),
+	email: z.string().min(1).email(),
+	password: z.string().min(8),
+	password_confirmation: z.string().min(8),
+    starting_day: z.coerce.date(),
+    commission: z.number().min(0).max(100),
+}).refine((data) => data.password === data.password_confirmation, {
+    message: "Passwords don't match",
+    path: ["password_confirmation"],
+})
+const defaultSchedule = {
+    Lundi: { startTime: '08:00', endTime: '17:00' },
+    Mardi: { startTime: '08:00', endTime: '17:00' },
+    Mercredi: { startTime: '08:00', endTime: '17:00' },
+    Jeudi: { startTime: '08:00', endTime: '17:00' },
+    Vendredi: { startTime: '08:00', endTime: '17:00' },
+}
 async function newEmployee(req, res, next) {
-	try {
-		const newEmployeeInfo = employeeInfoSchema.parse(req.body);
-		const newEmployee = await saveNewUser(
-			{
-				...newEmployeeInfo,
-				["role"]: "EMPLOYEE",
-			},
-			(validationRequired = false)
-		);
+    try {
+		const newEmployeeInfo = employeeInfoSchema.parse(req.body)
+        const newEmployeePayload = {...newEmployeeInfo, ['role']: 'EMPLOYEE', ['verified']: 1, ['schedule']: defaultSchedule }
+		const newEmployee = await saveNewUser(newEmployeePayload)
 		res.status(201).json({
 			employeeId: newEmployee._id,
 		});
