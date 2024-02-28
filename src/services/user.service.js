@@ -56,15 +56,21 @@ async function sendNewValidationCode(userId) {
 	const code = await generateValidationCode(user._id);
 	await sendEmailValidationCode(code, user);
 }
-async function saveNewUser(userInfo) {
+async function saveNewUser(userInfo, validationRequired = true) {
 	try {
 		const hashedPassword = await hashUserPassword(userInfo.password);
 		const newUser = new User({ ...userInfo, password: hashedPassword });
+		if (!validationRequired) {
+			newUser.verified = 1;
+		}
 		const session = await mongoose.startSession();
 		session.startTransaction();
 		await newUser.save();
 		const code = await generateValidationCode(newUser._id);
-		await sendEmailValidationCode(code, newUser);
+
+		if (validationRequired) {
+			await sendEmailValidationCode(code, newUser);
+		}
 		await session.commitTransaction();
 		await session.endSession();
 		return newUser;
