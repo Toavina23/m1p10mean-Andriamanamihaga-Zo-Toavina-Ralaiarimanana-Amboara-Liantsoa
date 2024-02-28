@@ -1,5 +1,35 @@
 const { Schema, model } = require("mongoose");
 
+const scheduleSchema = {
+	Lundi: {
+		startTime: { type: String },
+		endTime: { type: String }
+	},
+	Mardi: {
+		startTime: { type: String },
+		endTime: { type: String }
+	},
+	Mercredi: {
+		startTime: { type: String },
+		endTime: { type: String }
+	},
+	Jeudi: {
+		startTime: { type: String },
+		endTime: { type: String }
+	},
+	Vendredi: {
+		startTime: { type: String },
+		endTime: { type: String }
+	},
+	Samedi: {
+		startTime: { type: String },
+		endTime: { type: String }
+	},
+	Dimanche: {
+		startTime: { type: String },
+		endTime: { type: String }
+	}
+}
 const userSchema = new Schema({
 	email: { type: String, required: true, unique: true },
 	password: { type: String, required: true },
@@ -9,7 +39,8 @@ const userSchema = new Schema({
 	starting_day: { type: Date, required: false },
 	commission: { type: Number, required: false },
 	role: { type: String, required: true, enum: ["ADMIN", "EMPLOYEE", "CLIENT"] },
-});
+	schedule: scheduleSchema
+})
 
 userSchema.statics.findOneOrCreate = function (condition, callback) {
     const self = this

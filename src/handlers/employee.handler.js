@@ -2,6 +2,25 @@ const z = require('zod')
 const { User } = require('../models/user')
 const { saveNewUser } = require('../services/user.service')
 
+const dayScheduleSchema = z.object({
+    startTime: z.string().refine(time => isValidTimeFormat(time), {
+        message: 'Invalid time format. Please use the hh:mm format.',
+        path: ['startTime']
+    }),
+    endTime: z.string().refine(time => isValidTimeFormat(time), {
+        message: 'Invalid time format. Please use the hh:mm format.',
+        path: ['startTime']
+    })
+})
+const scheduleSchema = z.object({
+    Lundi: dayScheduleSchema.optional(),
+    Mardi: dayScheduleSchema.optional(),
+    Mercredi: dayScheduleSchema.optional(),
+    Jeudi: dayScheduleSchema.optional(),
+    Vendredi: dayScheduleSchema.optional(),
+    Samedi: dayScheduleSchema.optional(),
+    Dimanche: dayScheduleSchema.optional()
+})
 const employeeInfoSchema = z.object({
 	firstname: z.string().min(1),
 	lastname: z.string(),
@@ -63,10 +82,26 @@ async function deleteEmployee(req, res, next) {
     }
 }
 
+async function updateSchedule(req, res, next) {
+    try {
+        const newScheduleInfo = scheduleSchema.parse(req.body)
+        await User.findByIdAndUpdate(req.params.id, { schedule: newScheduleInfo })
+        res.json({})
+    } catch(err) {
+        next(err)
+    }
+}
+
+function isValidTimeFormat(time) {
+    const regex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
+    return regex.test(time);
+}
+
 module.exports = {
     newEmployee,
     getEmployees,
     findEmployee,
     updateEmployee,
-    deleteEmployee
+    deleteEmployee,
+    updateSchedule
 }
