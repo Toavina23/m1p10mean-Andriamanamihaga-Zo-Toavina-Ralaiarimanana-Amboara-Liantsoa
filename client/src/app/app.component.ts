@@ -1,12 +1,13 @@
+import { HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, HttpClientModule],
+  template: ` <router-outlet /> `,
+  styles: ``,
 })
 export class AppComponent {
   title = 'client';

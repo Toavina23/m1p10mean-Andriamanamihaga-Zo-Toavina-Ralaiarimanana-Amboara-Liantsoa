@@ -1,10 +1,54 @@
 const { Schema, model } = require("mongoose");
 
+const scheduleSchema = {
+	Lundi: {
+		startTime: { type: String },
+		endTime: { type: String }
+	},
+	Mardi: {
+		startTime: { type: String },
+		endTime: { type: String }
+	},
+	Mercredi: {
+		startTime: { type: String },
+		endTime: { type: String }
+	},
+	Jeudi: {
+		startTime: { type: String },
+		endTime: { type: String }
+	},
+	Vendredi: {
+		startTime: { type: String },
+		endTime: { type: String }
+	},
+	Samedi: {
+		startTime: { type: String },
+		endTime: { type: String }
+	},
+	Dimanche: {
+		startTime: { type: String },
+		endTime: { type: String }
+	}
+}
 const userSchema = new Schema({
-	username: { type: String, required: true },
+	email: { type: String, required: true, unique: true },
 	password: { type: String, required: true },
-	fullname: { type: String, required: true },
-});
+	firstname: { type: String, required: true },
+	lastname: { type: String, required: true },
+	verified: { type: Number, required: true, default: 0 },
+	starting_day: { type: Date, required: false },
+	commission: { type: Number, required: false },
+	role: { type: String, required: true, enum: ["ADMIN", "EMPLOYEE", "CLIENT"] },
+	schedule: scheduleSchema
+})
 
-const User = model("User", userSchema);
+userSchema.statics.findOneOrCreate = function (condition, callback) {
+    const self = this
+    self.findOne(condition, (err, result) => {
+        return result ? callback(err, result) : self.create(condition, (err, result) => { return callback(err, result) })
+    })
+}
+
+const User = model("user", userSchema);
 exports.User = User;
+exports.UserSchema = userSchema;

@@ -8,5 +8,7 @@ RUN npm install
 RUN npm run build
 WORKDIR /app
 EXPOSE 8000
+# for smtp protocol
+EXPOSE 587
 CMD ["npm", "start"]
 
