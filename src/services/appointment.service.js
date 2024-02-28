@@ -93,7 +93,29 @@ async function findAppointments(userId, filters) {
 		throw err;
 	}
 }
+async function findAppointmentDetails(appointmentId) {
+	try {
+		const appointmentDetails = await Appointment.findById(appointmentId)
+			.populate({
+				path: "tasks",
+				populate: [
+					{ path: "service", select: "title duration" },
+					{ path: "employeeId", select: "firstname lastname" },
+				],
+			})
+			.select(
+				"startDate status amountPaid promotionCode"
+			);
+
+		console.log(appointmentDetails);
+		return appointmentDetails;
+	} catch (error) {
+		throw error;
+	}
+}
+
 module.exports = {
 	saveAppointment,
 	findAppointments,
+	findAppointmentDetails,
 };
