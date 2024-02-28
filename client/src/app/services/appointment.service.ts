@@ -65,7 +65,6 @@ export class AppointmentService implements OnDestroy {
     )
       .toISOString()
       .slice(0, 16);
-    const userId = this.authService.getUserId();
     const tasks = this.newTasks.map((task) => {
       return {
         start: new Date(task.start.getTime() + 3 * 3600000)
@@ -79,7 +78,6 @@ export class AppointmentService implements OnDestroy {
       JSON.stringify({
         startDate: startDate,
         paymentId: paymentId,
-        userId: userId,
         tasks: tasks,
       })
     );
@@ -89,7 +87,6 @@ export class AppointmentService implements OnDestroy {
         {
           startDate: startDate,
           paymentId: paymentId,
-          userId: userId,
           tasks: tasks,
           promotionCodeId: promotionCodeId,
           amountPaid: amountPaid,

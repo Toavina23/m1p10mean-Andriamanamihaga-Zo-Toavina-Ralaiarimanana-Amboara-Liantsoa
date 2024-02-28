@@ -17,13 +17,14 @@ const appointmentSchema = z.object({
 			employeeId: z.string(),
 		})
 	),
-	userId: z.string(),
 	promotionCodeId: z.union([z.undefined(), z.string()]),
 });
 async function createNewAppointment(req, res, next) {
 	try {
+		const userId = req.user.id;
 		const appointmentPayload = appointmentSchema.parse(req.body);
 		console.log(appointmentPayload);
+		appointmentPayload["userId"] = userId;
 		await saveAppointment(appointmentPayload);
 		res.status(201).json({
 			status: "created",

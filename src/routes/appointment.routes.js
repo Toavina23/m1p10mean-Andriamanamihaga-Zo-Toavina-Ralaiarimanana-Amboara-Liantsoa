@@ -6,6 +6,6 @@ const {
 const { isAuthenticated, isCustomer } = require("../auth-middleware");
 
 const appointmentRouter = express.Router();
-appointmentRouter.post("/", createNewAppointment);
+appointmentRouter.post("/", isAuthenticated, isCustomer,createNewAppointment);
 appointmentRouter.get("/", isAuthenticated, isCustomer, getUserAppointments);
 module.exports = appointmentRouter;
