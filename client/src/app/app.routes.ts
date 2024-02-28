@@ -23,6 +23,9 @@ import { rolesGuard } from './guards/roles.guard';
 import { LogoutComponent } from './auth/logout.component';
 import { ManagerLoginComponent } from './manager/pages/login/login.component';
 import { EmployeeLoginComponent } from './employee/pages/login/login.component';
+import { ListOffersComponent } from './manager/pages/offers/list-offers.component';
+import { CreateOfferComponent } from './manager/pages/offers/create-offer.component';
+import { UpdateOfferComponent } from './manager/pages/offers/update-offer.component';
 
 export const routes: Routes = [
   {
@@ -123,6 +126,18 @@ export const routes: Routes = [
             path: 'services/:id',
             component: UpdateServiceComponent
           },
+          {
+            path: 'offers/new',
+            component: CreateOfferComponent
+          },
+          {
+            path: 'offers',
+            component: ListOffersComponent
+          },
+          {
+            path: 'offers/:id',
+            component: UpdateOfferComponent
+          }
         ]
       }
     ]

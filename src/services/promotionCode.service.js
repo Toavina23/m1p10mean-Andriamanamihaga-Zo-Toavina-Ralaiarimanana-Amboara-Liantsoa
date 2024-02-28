@@ -26,7 +26,17 @@ async function findPromotionCodeById(promotionCodeId) {
 		throw err;
 	}
 }
+
+async function createPromotionCode(payload) {
+	try {
+		const offer = await PromotionCode.create(payload)
+		return offer
+	} catch (error) {
+		throw error;
+	}
+}
 module.exports = {
 	getPromotionCode: getValidPromotionCode,
 	findPromotionCodeById,
+	createPromotionCode
 };
