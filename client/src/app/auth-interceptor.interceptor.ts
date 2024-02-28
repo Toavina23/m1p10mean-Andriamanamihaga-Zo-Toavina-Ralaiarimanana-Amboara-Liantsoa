@@ -6,6 +6,8 @@ const urlsToAddToken = [
   '/api/appointments',
   '/api/services',
   '/api/payments/paymentIntents',
+  '/api/preferences/services',
+  '/api/preferences/employees',
 ];
 const regexUrlsToAddToken = [
   /^\/api\/services\/[^\/]+\/employees$/, // Regex to match /services/:id/employees

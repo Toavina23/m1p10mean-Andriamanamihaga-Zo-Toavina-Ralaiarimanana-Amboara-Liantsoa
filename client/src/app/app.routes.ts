@@ -26,6 +26,8 @@ import { ListOffersComponent } from './manager/pages/offers/list-offers.componen
 import { CreateOfferComponent } from './manager/pages/offers/create-offer.component';
 import { UpdateOfferComponent } from './manager/pages/offers/update-offer.component';
 import { DashboardComponent } from './manager/pages/statistics/dashboard.component';
+import { PreferedEmployeeListComponent } from './customer/components/prefered-employee-list.component';
+import { PreferedServiceListComponent } from './customer/components/prefered-service-list.component';
 
 export const routes: Routes = [
   {
@@ -34,11 +36,11 @@ export const routes: Routes = [
   },
   {
     path: 'manager/login',
-    component: ManagerLoginComponent
+    component: ManagerLoginComponent,
   },
   {
     path: 'employee/login',
-    component: EmployeeLoginComponent
+    component: EmployeeLoginComponent,
   },
   {
     path: 'signup',
@@ -47,7 +49,7 @@ export const routes: Routes = [
   {
     path: 'logout',
     component: LogoutComponent,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
   },
   {
     path: 'customer',
@@ -80,6 +82,18 @@ export const routes: Routes = [
         path: 'preferences',
         title: 'Vos préférences',
         component: PreferencesComponent,
+        children: [
+          {
+            path: 'employees',
+            title: 'Vos employés préférés',
+            component: PreferedEmployeeListComponent,
+          },
+          {
+            path: 'services',
+            title: 'Vos services préférés',
+            component: PreferedServiceListComponent,
+          },
+        ],
       },
     ],
   },
@@ -116,15 +130,15 @@ export const routes: Routes = [
           },
           {
             path: 'services/new',
-            component: CreateServiceComponent
+            component: CreateServiceComponent,
           },
           {
             path: 'services',
-            component: ListServiceComponent
+            component: ListServiceComponent,
           },
           {
             path: 'services/:id',
-            component: UpdateServiceComponent
+            component: UpdateServiceComponent,
           },
           {
             path: 'offers/new',
@@ -150,12 +164,12 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: TasksComponent
+        component: TasksComponent,
       },
       {
         path: 'profile',
-        component: ProfileComponent
+        component: ProfileComponent,
       },
-    ]
-  }
+    ],
+  },
 ];
