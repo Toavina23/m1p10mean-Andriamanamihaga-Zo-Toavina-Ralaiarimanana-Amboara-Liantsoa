@@ -16,7 +16,7 @@ async function getValidPromotionCode(code, userId) {
 			clientId: userId,
 		},
 	});
-	if (used) {
+	if (used.length > 0) {
 		throw new AppError(400, "Bad request", "Vous avez deja utiliser ce code de promotion");
 	}
 	const promotionCode = await PromotionCode.findOne({
