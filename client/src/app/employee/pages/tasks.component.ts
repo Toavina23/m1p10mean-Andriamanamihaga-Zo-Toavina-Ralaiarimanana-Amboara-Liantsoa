@@ -37,7 +37,7 @@ export class TasksComponent {
   updateIcon = faPencilAlt
 
   ngOnInit() {
-    this.http.get(`${environment.serverUrl}/tasks/employees/${this.authService.getUserId()}`)
+    this.http.get(`${environment.serverUrl}/tasks/employees/${this.authService.getUserId()}`, { headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }})
         .subscribe((res) => { this.tasks = res })
   }
 

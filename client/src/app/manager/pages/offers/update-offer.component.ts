@@ -24,7 +24,7 @@ import { environment } from '../../../../environments/environment';
         <button class="btn" routerLink="/manager/offers">
           <fa-icon [icon]="faArrowLeft"></fa-icon>
         </button>
-        <h1 class="text-lg">Ajouter une nouvelle offre spéciale</h1>
+        <h1 class="text-lg">Mettre à jour l'offre</h1>
       </div>
       <form [formGroup]="form" (submit)="onSubmit()" for class="p-6 grid grid-cols-6 gap-4">
         <div class="col-span-3">
