@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-list-service',
@@ -24,7 +25,7 @@ import { environment } from '../../../../environments/environment';
             <th class="px-4 py-2 border-r">Description</th>
             <th class="px-4 py-2 border-r">Durée</th>
             <th class="px-4 py-2 border-r">Prix</th>
-            <th class="px-4 py-2">Actions</th>
+            <th class="px-4 py-2 border-b">Actions</th>
           </tr>
         </thead>
           <tbody class="text-gray-600">
@@ -34,7 +35,7 @@ import { environment } from '../../../../environments/environment';
               <td class="border border-l-0 px-4 py-2">{{ service.description }}</td>
               <td class="border border-l-0 px-4 py-2">{{ service.duration }}</td>
               <td class="border border-l-0 px-4 py-2 text-right">{{ service.price }}</td>
-              <td class="border border-l-0 border-r-0 px-4 py-2 flex justify-center space-x-10">
+              <td class="border-b px-4 py-2 flex justify-center space-x-10">
                 <button [routerLink]="['/manager/services', service._id]" class="btn-gray">
                   <fa-icon [icon]="updateIcon"></fa-icon>
                 </button>
@@ -55,10 +56,14 @@ export class ListServiceComponent {
   services: any[] = []
   loading = ''
 
-  constructor(private http: HttpClient){}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ){}
+
   ngOnInit(): void {
     this.http
-      .get(`${environment.serverUrl}/services`)
+      .get(`${environment.serverUrl}/services`, { headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }})
       .subscribe((res: any) => this.services = res.services)
   }
 

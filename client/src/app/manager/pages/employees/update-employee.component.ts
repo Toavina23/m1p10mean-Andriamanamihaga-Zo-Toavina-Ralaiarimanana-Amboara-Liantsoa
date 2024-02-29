@@ -74,6 +74,7 @@ export class UpdateEmployeeComponent implements OnInit {
     password_confirmation: [ null, [Validators.required, Validators.minLength(8)]],
     starting_day: [ null, [Validators.required]],
     commission: [ null, [Validators.required]],
+    schedule: [{}]
   })
   loading = false
   returnIcon = faArrowLeft

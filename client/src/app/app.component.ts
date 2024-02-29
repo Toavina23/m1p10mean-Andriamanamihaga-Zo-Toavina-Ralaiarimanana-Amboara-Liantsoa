@@ -8,10 +8,10 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   imports: [RouterOutlet, RouterLink, RouterLinkActive, HttpClientModule],
   template: ` 
     <router-outlet />
-    <!-- <div class="w-full fixed bottom-0 text-center">
+    <div class="w-full fixed bottom-0 text-center">
       <p>&copy; ANDRIAMANAMIHAGA Zo Toavina (1073)</p>
       <p>RALAIARIMANANA Liantsoa Amboara Ny Avo (1150)</p>
-    </div> -->
+    </div>
   `,
   styles: ``,
 })
