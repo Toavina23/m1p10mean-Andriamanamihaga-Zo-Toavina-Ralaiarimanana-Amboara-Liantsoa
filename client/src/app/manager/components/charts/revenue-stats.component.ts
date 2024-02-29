@@ -64,7 +64,7 @@ export class RevenueStatsComponent {
     private http: HttpClient,
     private authService: AuthService
   ) {
-    this.http.get<any[]>(`${environment.serverUrl}/appointments/last`, { headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }})
+    this.http.get<any[]>(`${environment.serverUrl}/reservations`, { headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }})
           .subscribe((res) => {
             const revenues = this.aggregateRevenuePerMonth(res)
             this.chartOptions = {

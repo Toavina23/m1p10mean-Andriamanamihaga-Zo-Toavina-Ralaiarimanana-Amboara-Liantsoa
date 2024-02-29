@@ -108,7 +108,7 @@ export class AppointmentsStatsComponent {
         private http: HttpClient,
         private authService: AuthService
     ) {
-        this.http.get<any[]>(`${environment.serverUrl}/appointments/last`, { headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }})
+        this.http.get<any[]>(`${environment.serverUrl}/reservations`, { headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }})
             .subscribe(res => {
                 const { data, categories } = this.aggregateReservationsPerDay(res)
                 this.reservationPerDay = data
