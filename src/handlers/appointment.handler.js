@@ -5,6 +5,7 @@ const {
 	findAppointmentDetails,
 } = require("../services/appointment.service");
 const { AppError } = require("../app_error");
+const { Appointment } = require("../models/appointment");
 
 const appointmentSchema = z.object({
 	startDate: z.coerce.date(),
@@ -76,6 +77,14 @@ async function getUserAppointments(req, res, next) {
 		next(error);
 	}
 }
+async function getLastAppointments(req, res, next) {
+	try {
+		const appointments = await Appointment.find().sort('bookingDate')
+		res.json(appointments)
+	} catch (error) {
+		next(error)
+	}
+}
 const appointmentDetailSchema = z.string().min(1);
 async function getAppointmentDetails(req, res, next) {
 	try {
@@ -93,4 +102,5 @@ module.exports = {
 	createNewAppointment,
 	getUserAppointments,
 	getAppointmentDetails,
+	getLastAppointments
 };

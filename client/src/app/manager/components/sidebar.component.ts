@@ -15,7 +15,10 @@ import { CommonModule } from '@angular/common';
           <p class="uppercase text-xs text-gray-600 mb-4 tracking-wider">Pages</p>
         </div>
 
-        <a href="#" class="mb-3 capitalize font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
+        <a 
+          routerLink="/manager"
+          [ngClass]="{'mb-3 capitalize font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500': true, 'text-teal-600': route == '/manager'}"
+        >
           <fa-icon [icon]="faChartPie" class="text-xs mr-2"></fa-icon>
           Dashboard
         </a>

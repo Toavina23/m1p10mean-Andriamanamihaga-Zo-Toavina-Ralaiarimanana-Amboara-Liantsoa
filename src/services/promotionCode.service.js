@@ -1,5 +1,8 @@
 const { AppError } = require("../app_error");
 const { PromotionCode } = require("../models/promotionCode");
+const PROMO_CODE_TEMPLATE = require("../templates/promo_code_email_template");
+const { sendMail } = require("./email.service");
+const { User } = require('../models/user');
 
 async function getValidPromotionCode(code) {
 	const now = new Date(Date.now() + 3 * 3_600_000);
@@ -35,8 +38,37 @@ async function createPromotionCode(payload) {
 		throw error;
 	}
 }
+
+async function sendAllClientsEmail(offer) {
+	try {
+		const clients = await User.find({ role: 'CLIENT' })
+		if(clients) {
+			clients.forEach((client) => sendEmailPromotionCode(offer, client))
+		}
+	} catch(error) {
+		throw error
+	}
+}
+
+async function sendEmailPromotionCode(offer, client) {
+	const { code, reduction, endDate } = offer
+	await sendMail(
+		{
+			from: `Beauty Salon <${process.env.EMAIL_USER}>`,
+			to: client.email,
+			subject: "Beauty Salon special offer",
+			text: code,
+			html: PROMO_CODE_TEMPLATE(code, reduction, endDate.toLocaleDateString('fr-FR')),
+		},
+		function (info) {
+			console.log(`Special offer email sent.`);
+		}
+	);
+}
+
 module.exports = {
 	getPromotionCode: getValidPromotionCode,
 	findPromotionCodeById,
-	createPromotionCode
+	createPromotionCode,
+	sendAllClientsEmail
 };
