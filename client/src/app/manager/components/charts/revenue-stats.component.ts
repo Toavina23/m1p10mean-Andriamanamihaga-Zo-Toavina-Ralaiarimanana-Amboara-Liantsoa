@@ -12,13 +12,15 @@ import {
 } from "ng-apexcharts";
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-revenue-stats',
   standalone: true,
   imports: [
     NgApexchartsModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    CommonModule
   ],
   template: `
     <div class="card">
@@ -27,7 +29,7 @@ import { AuthService } from '../../../services/auth.service';
                 <p>Revenues (en Ar)</p>
             </h1>
         </div>                
-        <div class="analytics_1">
+        <div *ngIf="chartOptions" class="analytics_1">
           <apx-chart
             [series]="chartOptions.series"
             [chart]="chartOptions.chart"
