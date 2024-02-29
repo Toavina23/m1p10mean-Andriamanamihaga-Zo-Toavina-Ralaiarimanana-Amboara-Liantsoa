@@ -1,5 +1,5 @@
 const { ZodError, ...z } = require("zod");
-const { getPromotionCode, createPromotionCode, sendAllClientsEmail } = require("../services/promotionCode.service");
+const { getValidPromotionCode, createPromotionCode, sendAllClientsEmail } = require("../services/promotionCode.service");
 const { PromotionCode } = require("../models/promotionCode");
 
 const newPromotionCodeSchema = z.object({
@@ -16,6 +16,7 @@ const updatePromotionCodeSchema = z.object({
 async function validatePromotionCode(req, res, next) {
 	try {
 		const code = req.params.code;
+		const user = req.user
 		if (!code) {
 			throw new ZodError([
 				{
@@ -23,7 +24,7 @@ async function validatePromotionCode(req, res, next) {
 				},
 			]);
 		}
-		const promotionCode = await getPromotionCode(code);
+		const promotionCode = await getValidPromotionCode(code, user.id);
 		res.json({
 			reduction: promotionCode.reduction,
 			id: promotionCode._id,
