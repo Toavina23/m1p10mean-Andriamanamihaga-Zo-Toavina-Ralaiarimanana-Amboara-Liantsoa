@@ -21,12 +21,10 @@ import {
   StripePaymentElementOptions,
 } from '@stripe/stripe-js';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  FormGroup,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-appointment-payment',
@@ -37,6 +35,7 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     MatFormField,
     MatInputModule,
+    MatProgressSpinnerModule,
     ReactiveFormsModule,
   ],
   template: `
@@ -75,11 +74,14 @@ import { MatInputModule } from '@angular/material/input';
       </div>
       <button
         type="submit"
+        class="ml-5 inline-flex relative items-center justify-center"
         mat-raised-button
         color="primary"
         [disabled]="paying()"
       >
-        Payer
+        @if(loading) {
+        <mat-spinner class="absolute m-auto" [diameter]="30"></mat-spinner>
+        } @else { Payer }
       </button>
     </form>
   `,

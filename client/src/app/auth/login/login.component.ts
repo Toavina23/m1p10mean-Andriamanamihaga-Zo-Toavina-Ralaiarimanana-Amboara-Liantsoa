@@ -48,7 +48,7 @@ export class LoginComponent implements OnDestroy, OnInit {
                 this.router.navigate(['/employee']);
                 break;
               default:
-                this.router.navigate(['/manager/employees']);
+                this.router.navigate(['/manager']);
                 break;
             }
             // this.router.navigate(['/customer']);

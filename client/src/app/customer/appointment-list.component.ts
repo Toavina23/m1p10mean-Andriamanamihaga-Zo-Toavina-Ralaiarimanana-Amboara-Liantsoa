@@ -30,6 +30,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { LucideAngularModule } from 'lucide-angular';
 import { MatDialog } from '@angular/material/dialog';
 import { AppointmentDetailsComponent } from './components/appointment-details.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-appointment-list',
@@ -46,6 +47,7 @@ import { AppointmentDetailsComponent } from './components/appointment-details.co
     MatNativeDateModule,
     MatSelectModule,
     LucideAngularModule,
+    MatProgressSpinnerModule,
   ],
   providers: [provideNativeDateAdapter()],
   template: `
@@ -89,8 +91,16 @@ import { AppointmentDetailsComponent } from './components/appointment-details.co
             <mat-option [value]="1">Terminé</mat-option>
           </mat-select>
         </mat-form-field>
-        <button type="submit" class="h-max" mat-raised-button color="primary">
-          filtrer
+        <button
+          type="submit"
+          [disabled]="loading"
+          class="h-max"
+          mat-raised-button
+          color="primary"
+        >
+          @if(loading) {
+          <mat-spinner class="absolute m-auto" [diameter]="30"></mat-spinner>
+          }@else { Filtrer }
         </button>
         <button
           type="button"
@@ -172,6 +182,7 @@ export class AppointmentListComponent
   }
   displayedColumns = ['date', 'amountPaid', 'status', 'actions'];
   error = '';
+  loading = false;
   subscription: Subscription | undefined;
   dataSource = new MatTableDataSource<UserAppointment>();
   filterForm = this.fb.group({
@@ -208,15 +219,17 @@ export class AppointmentListComponent
     }
     filters.page = (this.paginator ? this.paginator.pageIndex : 0) + 1;
     filters.pageSize = this.paginator ? this.paginator.pageSize : 5;
+    this.loading = true;
     this.subscription = this.appointmentService
       .getUserAppointments(filters)
       .subscribe({
         next: (response) => {
+          this.loading = false;
           this.dataSource.data = response.data;
-
           this.paginator.length = response.totalCount;
         },
         error: (error) => {
+          this.loading = false;
           this.error = error.message;
         },
       });

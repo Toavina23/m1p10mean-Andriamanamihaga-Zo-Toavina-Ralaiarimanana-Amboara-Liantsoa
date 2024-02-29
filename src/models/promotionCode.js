@@ -5,7 +5,7 @@ const {
 
 const promotionCodeSchema = new Schema({
 	endDate: { type: Date, required: true },
-	code: { type: String, required: true },
+	code: { type: String, required: true, unique: true },
 	reduction: { type: Number, required: true },
 });
 

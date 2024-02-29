@@ -12,7 +12,7 @@ export const rolesGuard: CanActivateFn = (route, state) => {
       return true
 
     case 'ADMIN':
-      router.navigate(['/manager/employees'])
+      router.navigate(['/manager'])
       return false
 
     case 'EMPLOYEE':

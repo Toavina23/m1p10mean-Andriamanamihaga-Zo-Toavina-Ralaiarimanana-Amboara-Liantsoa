@@ -4,7 +4,6 @@ import { CustomerComponent } from './customer/customer.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { authGuard } from './guards/auth.guard';
 import { ManagerComponent } from './manager/layouts/manager.component';
-import { BlankComponent } from './manager/layouts/blank.component';
 import { AdminComponent } from './manager/layouts/admin.component';
 import { AppointmentComponent } from './customer/appointment/appointment.component';
 import { PreferencesComponent } from './customer/preferences/preferences.component';
@@ -23,6 +22,12 @@ import { rolesGuard } from './guards/roles.guard';
 import { LogoutComponent } from './auth/logout.component';
 import { ManagerLoginComponent } from './manager/pages/login/login.component';
 import { EmployeeLoginComponent } from './employee/pages/login/login.component';
+import { ListOffersComponent } from './manager/pages/offers/list-offers.component';
+import { CreateOfferComponent } from './manager/pages/offers/create-offer.component';
+import { UpdateOfferComponent } from './manager/pages/offers/update-offer.component';
+import { DashboardComponent } from './manager/pages/statistics/dashboard.component';
+import { PreferedEmployeeListComponent } from './customer/components/prefered-employee-list.component';
+import { PreferedServiceListComponent } from './customer/components/prefered-service-list.component';
 
 export const routes: Routes = [
   {
@@ -31,11 +36,11 @@ export const routes: Routes = [
   },
   {
     path: 'manager/login',
-    component: ManagerLoginComponent
+    component: ManagerLoginComponent,
   },
   {
     path: 'employee/login',
-    component: EmployeeLoginComponent
+    component: EmployeeLoginComponent,
   },
   {
     path: 'signup',
@@ -44,7 +49,7 @@ export const routes: Routes = [
   {
     path: 'logout',
     component: LogoutComponent,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
   },
   {
     path: 'customer',
@@ -77,6 +82,23 @@ export const routes: Routes = [
         path: 'preferences',
         title: 'Vos préférences',
         component: PreferencesComponent,
+        children: [
+          {
+            path: 'employees',
+            title: 'Vos employés préférés',
+            component: PreferedEmployeeListComponent,
+          },
+          {
+            path: 'services',
+            title: 'Vos services préférés',
+            component: PreferedServiceListComponent,
+          },
+          {
+            path: '',
+            redirectTo: '/customer/preferences/services',
+            pathMatch: 'full',
+          },
+        ],
       },
     ],
   },
@@ -93,12 +115,12 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: BlankComponent,
-      },
-      {
-        path: '',
         component: AdminComponent,
         children: [
+          {
+            path: '',
+            component: DashboardComponent
+          },
           {
             path: 'employees/new',
             component: CreateEmployeeComponent,
@@ -113,16 +135,28 @@ export const routes: Routes = [
           },
           {
             path: 'services/new',
-            component: CreateServiceComponent
+            component: CreateServiceComponent,
           },
           {
             path: 'services',
-            component: ListServiceComponent
+            component: ListServiceComponent,
           },
           {
             path: 'services/:id',
-            component: UpdateServiceComponent
+            component: UpdateServiceComponent,
           },
+          {
+            path: 'offers/new',
+            component: CreateOfferComponent
+          },
+          {
+            path: 'offers',
+            component: ListOffersComponent
+          },
+          {
+            path: 'offers/:id',
+            component: UpdateOfferComponent
+          }
         ]
       }
     ]
@@ -135,12 +169,12 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: TasksComponent
+        component: TasksComponent,
       },
       {
         path: 'profile',
-        component: ProfileComponent
+        component: ProfileComponent,
       },
-    ]
-  }
+    ],
+  },
 ];

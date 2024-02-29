@@ -83,6 +83,7 @@ async function findAppointments(userId, filters) {
 			.skip(skip)
 			.limit(pageSize)
 			.select(["amountPaid", "status", "startDate"])
+			.sort({ startDate: -1 })
 			.exec();
 		const totalCount = await Appointment.countDocuments(query);
 		return {
@@ -103,9 +104,7 @@ async function findAppointmentDetails(appointmentId) {
 					{ path: "employeeId", select: "firstname lastname" },
 				],
 			})
-			.select(
-				"startDate status amountPaid promotionCode"
-			);
+			.select("startDate status amountPaid promotionCode");
 
 		console.log(appointmentDetails);
 		return appointmentDetails;

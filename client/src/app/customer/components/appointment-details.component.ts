@@ -3,6 +3,10 @@ import { AppointmentService } from '../../services/appointment.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HttpEventType } from '@angular/common/http';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import {
+  MatProgressSpinner,
+  MatProgressSpinnerModule,
+} from '@angular/material/progress-spinner';
 
 interface Service {
   _id: string;
@@ -45,8 +49,13 @@ export interface Appointment {
 @Component({
   selector: 'app-appointment-details',
   standalone: true,
-  imports: [MatTableModule],
+  imports: [MatTableModule, MatProgressSpinnerModule],
   template: `
+    @if(loading == true) {
+    <div class="flex w-full h-full items-center justify-center">
+      <mat-spinner></mat-spinner>
+    </div>
+    } @else {
     <div class="mx-5 mt-6">
       <div>
         <h1 class="text-lg">Informations sur le rendez-vous</h1>
@@ -125,13 +134,14 @@ export interface Appointment {
         </div>
       </div>
     </div>
+    }
   `,
   styles: ``,
 })
 export class AppointmentDetailsComponent implements OnInit {
   appointmentDetails: Appointment | undefined;
   error = '';
-  loading = false;
+  loading = true;
   displayedColumns = ['startTime', 'employee', 'service', 'duration', 'cost'];
   dataSource = new MatTableDataSource<Task>();
   constructor(
