@@ -11,6 +11,7 @@ import {
   NgApexchartsModule
 } from "ng-apexcharts";
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-revenue-stats',
@@ -58,9 +59,10 @@ export class RevenueStatsComponent {
   chartOptions: any 
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService
   ) {
-    this.http.get<any[]>(`${environment.serverUrl}/appointments/last`)
+    this.http.get<any[]>(`${environment.serverUrl}/appointments/last`, { headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }})
           .subscribe((res) => {
             const revenues = this.aggregateRevenuePerMonth(res)
             this.chartOptions = {
