@@ -41,7 +41,7 @@ async function createPromotionCode(payload) {
 
 async function sendAllClientsEmail(offer) {
 	try {
-		const clients = await User.find({ role: 'CLIENT' })
+		const clients = await User.find({ role: 'CLIENT', verified: 1 })
 		if(clients) {
 			clients.forEach((client) => sendEmailPromotionCode(offer, client))
 		}

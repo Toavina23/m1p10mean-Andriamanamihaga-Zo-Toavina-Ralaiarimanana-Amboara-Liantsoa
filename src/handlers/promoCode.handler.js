@@ -35,7 +35,7 @@ async function validatePromotionCode(req, res, next) {
 
 async function getOffers(req, res, next) {
 	try {
-		const offers = await PromotionCode.find()
+		const offers = await PromotionCode.find().sort({'endDate': 'desc'})
 		res.json(offers)
 	} catch (error) {
 		next(error)
