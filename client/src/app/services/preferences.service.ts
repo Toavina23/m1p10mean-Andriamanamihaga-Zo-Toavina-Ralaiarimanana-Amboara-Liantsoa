@@ -16,6 +16,7 @@ export class PreferencesService {
       })
       .pipe(catchError(this.handleError));
   }
+
   getPreferedServices() {
     return this.http
       .get<{ preferedServices: { _id: string; title: string }[] }>(
@@ -23,6 +24,7 @@ export class PreferencesService {
       )
       .pipe(catchError(this.handleError));
   }
+
   removeFromPreferedServices(serviceId: string) {
     return this.http
       .delete(`${environment.serverUrl}/preferences/services`, {
@@ -32,6 +34,44 @@ export class PreferencesService {
       })
       .pipe(catchError(this.handleError));
   }
+  addEmployeeToPreference(employeeId: string) {
+    return this.http
+      .post(`${environment.serverUrl}/preferences/employees`, {
+        employeeId: employeeId,
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  getPreferedEmployees() {
+    return this.http
+      .get<{
+        preferedEmployees: {
+          _id: string;
+          firstname: string;
+          lastname: string;
+        }[];
+      }>(`${environment.serverUrl}/preferences/employees`)
+      .pipe(catchError(this.handleError));
+  }
+
+  removeFromPreferedEmployees(employeeId: string) {
+    return this.http
+      .delete(`${environment.serverUrl}/preferences/employees`, {
+        body: {
+          employeeId: employeeId,
+        },
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  getEmployeeList() {
+    return this.http
+      .get<{ _id: string; firstname: string; lastname: string }[]>(
+        `${environment.serverUrl}/employees`
+      )
+      .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     let userMessage = 'Something bad happened; please try again later.';
     if (error.error instanceof ErrorEvent) {

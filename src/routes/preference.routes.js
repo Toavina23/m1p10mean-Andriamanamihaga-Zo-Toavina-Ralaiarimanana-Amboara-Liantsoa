@@ -3,6 +3,9 @@ const {
 	setToPreferedService,
 	removeFromPreferedService,
 	getUserPreferedServices,
+	getUserPreferedEmployees,
+	setToPreferedEmployee,
+	removeFromPreferedEmployee,
 } = require("../handlers/preferences.handler");
 const { isAuthenticated, isCustomer } = require("../auth-middleware");
 
@@ -24,5 +27,23 @@ preferencesRouter.get(
 	isAuthenticated,
 	isCustomer,
 	getUserPreferedServices
+);
+preferencesRouter.post(
+	"/employees",
+	isAuthenticated,
+	isCustomer,
+	setToPreferedEmployee
+);
+preferencesRouter.delete(
+	"/employees",
+	isAuthenticated,
+	isCustomer,
+	removeFromPreferedEmployee
+);
+preferencesRouter.get(
+	"/employees",
+	isAuthenticated,
+	isCustomer,
+	getUserPreferedEmployees
 );
 module.exports = preferencesRouter;

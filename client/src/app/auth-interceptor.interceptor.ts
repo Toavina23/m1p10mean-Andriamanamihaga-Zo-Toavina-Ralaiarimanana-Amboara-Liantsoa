@@ -5,6 +5,7 @@ import { AuthService } from './services/auth.service';
 const urlsToAddToken = [
   '/api/appointments',
   '/api/services',
+  '/api/employees',
   '/api/payments/paymentIntents',
   '/api/preferences/services',
   '/api/preferences/employees',

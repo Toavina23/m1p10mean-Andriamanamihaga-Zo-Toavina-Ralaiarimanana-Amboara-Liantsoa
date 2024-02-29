@@ -93,6 +93,11 @@ export const routes: Routes = [
             title: 'Vos services préférés',
             component: PreferedServiceListComponent,
           },
+          {
+            path: '',
+            redirectTo: '/customer/preferences/services',
+            pathMatch: 'full',
+          },
         ],
       },
     ],
