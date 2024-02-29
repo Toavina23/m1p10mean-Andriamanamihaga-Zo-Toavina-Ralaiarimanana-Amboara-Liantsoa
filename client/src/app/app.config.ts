@@ -15,6 +15,7 @@ import {
   ChevronRight,
   EyeIcon,
   Trash,
+  LogOut,
 } from 'lucide-angular';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -38,6 +39,7 @@ export const appConfig: ApplicationConfig = {
         ChevronRight,
         EyeIcon,
         Trash,
+        LogOut
       })
     ),
     provideAnimationsAsync(),

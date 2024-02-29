@@ -1,33 +1,43 @@
 <main class="flex h-screen pt-3 pr-3">
-    <div class="w-1/6 px-2">
-        <div class="flex items-center">
-            <img src="../../assets/logo.png" alt="logo" width="50" height="50">
-            <h1 class="text-2xl font-semibold mx-3">Beauty Salon</h1>
+    <div class="flex flex-col justify-between w-1/6 px-2">
+        <div>
+            <div class="flex items-center">
+                <img src="../../assets/logo.png" alt="logo" width="50" height="50">
+                <h1 class="text-2xl font-semibold mx-3">Beauty Salon</h1>
+            </div>
+            <nav class="mt-11">
+                <ul class="flex flex-col gap-3">
+                    <li routerLink="/customer/appointments"
+                        routerLinkActive="border-l-4 rounded-sm border-l-blue-600 text-blue-600"
+                        class="hover:text-blue-600 px-2 py-2 pl-4 cursor-pointer">
+                        <a>
+                            <div class="flex flex-row gap-4 ">
+                                <lucide-icon name="bookmark"></lucide-icon>
+                                Mes rendez-vous
+                            </div>
+                        </a>
+                    </li>
+                    <li routerLink="/customer/preferences"
+                        routerLinkActive="border-l-4 rounded-sm border-l-blue-600 text-blue-600"
+                        class="hover:text-blue-600 px-2 py-2 pl-4 cursor-pointer">
+                        <a>
+                            <div class="flex flex-row gap-4 ">
+                                <lucide-icon name="heart"></lucide-icon>
+                                Mes préferences
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
-        <nav class="mt-11">
-            <ul class="flex flex-col gap-3">
-                <li routerLink="/customer/appointments"
-                    routerLinkActive="border-l-4 rounded-sm border-l-blue-600 text-blue-600"
-                    class="hover:text-blue-600 px-2 py-2 pl-4 cursor-pointer">
-                    <a>
-                        <div class="flex flex-row gap-4 ">
-                            <lucide-icon name="bookmark"></lucide-icon>
-                            Mes rendez-vous
-                        </div>
-                    </a>
-                </li>
-                <li routerLink="/customer/preferences"
-                    routerLinkActive="border-l-4 rounded-sm border-l-blue-600 text-blue-600"
-                    class="hover:text-blue-600 px-2 py-2 pl-4 cursor-pointer">
-                    <a>
-                        <div class="flex flex-row gap-4 ">
-                            <lucide-icon name="heart"></lucide-icon>
-                            Mes préferences
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        <div>
+            <button mat-button color="primary" (click)="logout()">
+                <div class="flex gap-4">
+                    <lucide-icon name="logOut"></lucide-icon>
+                    Se deconnecter
+                </div>
+            </button>
+        </div>
     </div>
     <div class="w-5/6 min-h-screen h-max bg-slate-200 px-4 py-2 rounded-lg">
         <router-outlet></router-outlet>
