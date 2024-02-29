@@ -5,6 +5,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
 import { NgApexchartsModule } from "ng-apexcharts";
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-employee-time-stats',
@@ -54,9 +55,10 @@ export class EmployeeTimeStatsComponent {
   chartOptions: any 
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService
   ) {
-    this.http.get<any[]>(`${environment.serverUrl}/employees`)
+    this.http.get<any[]>(`${environment.serverUrl}/employees`, { headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }})
         .subscribe((res) => {
           const meanHours = this.meanHours(res)
           const employeeNames = this.employeeNames(res)

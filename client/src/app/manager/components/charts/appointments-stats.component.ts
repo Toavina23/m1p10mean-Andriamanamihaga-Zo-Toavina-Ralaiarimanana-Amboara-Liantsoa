@@ -12,6 +12,7 @@ import {
 import { CommonModule } from '@angular/common';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../services/auth.service';
 
 export type ChartOptions = {
     series: ApexAxisChartSeries;
@@ -104,9 +105,10 @@ export class AppointmentsStatsComponent {
     chartMode = 'month'
 
     constructor(
-        private http: HttpClient
+        private http: HttpClient,
+        private authService: AuthService
     ) {
-        this.http.get<any[]>(`${environment.serverUrl}/appointments/last`)
+        this.http.get<any[]>(`${environment.serverUrl}/reservations`, { headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }})
             .subscribe(res => {
                 const { data, categories } = this.aggregateReservationsPerDay(res)
                 this.reservationPerDay = data

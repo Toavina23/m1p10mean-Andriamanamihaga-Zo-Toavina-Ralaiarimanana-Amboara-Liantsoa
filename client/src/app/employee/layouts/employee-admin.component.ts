@@ -14,7 +14,7 @@ import { EmployeeSidebarComponent } from '../components/employee-sidebar.compone
       <div class="flex-1 flex flex-row flex-wrap p-3">
         <app-employee-sidebar></app-employee-sidebar>
         <!-- strat content -->
-        <div class="bg-gray-100 flex-1 ml-3">
+        <div class="bg-gray-100 flex-1 ml-3 mb-16">
           <router-outlet></router-outlet>
         </div>
         <!-- end content -->
