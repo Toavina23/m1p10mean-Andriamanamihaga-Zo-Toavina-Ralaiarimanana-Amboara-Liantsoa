@@ -4,7 +4,6 @@ import { CustomerComponent } from './customer/customer.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { authGuard } from './guards/auth.guard';
 import { ManagerComponent } from './manager/layouts/manager.component';
-import { BlankComponent } from './manager/layouts/blank.component';
 import { AdminComponent } from './manager/layouts/admin.component';
 import { AppointmentComponent } from './customer/appointment/appointment.component';
 import { PreferencesComponent } from './customer/preferences/preferences.component';
@@ -26,6 +25,7 @@ import { EmployeeLoginComponent } from './employee/pages/login/login.component';
 import { ListOffersComponent } from './manager/pages/offers/list-offers.component';
 import { CreateOfferComponent } from './manager/pages/offers/create-offer.component';
 import { UpdateOfferComponent } from './manager/pages/offers/update-offer.component';
+import { DashboardComponent } from './manager/pages/statistics/dashboard.component';
 
 export const routes: Routes = [
   {
@@ -96,12 +96,12 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: BlankComponent,
-      },
-      {
-        path: '',
         component: AdminComponent,
         children: [
+          {
+            path: '',
+            component: DashboardComponent
+          },
           {
             path: 'employees/new',
             component: CreateEmployeeComponent,

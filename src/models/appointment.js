@@ -18,6 +18,7 @@ const promotionCodeSchema = new Schema({
 	reduction: { type: Number, required: true },
 });
 const appointmentSchema = new Schema({
+	bookingDate: { type: Date, required: false, default: () => Date.now() },
 	startDate: { type: Date, required: true },
 	client: { type: EmbededUserSchema },
 	tasks: { type: [ObjectId], ref: "task", required: true },
