@@ -1,5 +1,5 @@
 const { ZodError, ...z } = require("zod");
-const { getPromotionCode, createPromotionCode } = require("../services/promotionCode.service");
+const { getPromotionCode, createPromotionCode, sendAllClientsEmail } = require("../services/promotionCode.service");
 const { PromotionCode } = require("../models/promotionCode");
 
 const newPromotionCodeSchema = z.object({
@@ -55,6 +55,7 @@ async function newOffer(req, res, next) {
 	try {
 		const newOfferInfo = newPromotionCodeSchema.parse(req.body)
 		const newOffer = await createPromotionCode(newOfferInfo)
+		sendAllClientsEmail(newOfferInfo)
 		res.json({
 			offer_id: newOffer._id
 		})
