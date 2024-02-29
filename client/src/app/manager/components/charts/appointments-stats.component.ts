@@ -121,7 +121,7 @@ export class AppointmentsStatsComponent {
                         ],
                         chart: {
                             height: 350,
-                            type: "line",
+                            type: "area",
                         },
                         title: {
                             text: "Nombre de réservations par mois"
@@ -139,7 +139,7 @@ export class AppointmentsStatsComponent {
                         ],
                         chart: {
                             height: 350,
-                            type: "line",
+                            type: "area",
                         },
                         title: {
                             text: "Nombre de réservations par jour"
