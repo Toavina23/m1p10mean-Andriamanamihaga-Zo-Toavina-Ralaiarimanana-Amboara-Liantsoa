@@ -51,8 +51,14 @@
                         @if(promoCodeReduction == 0) {
                         <button type="button"
                             [disabled]="appointmentForm.invalid || loadingPromotionCode || tasks.length == 0"
-                            mat-raised-button color="primary" class="ml-5" (click)="onPromoCodeSubmition()">
+                            mat-raised-button color="primary"
+                            class="ml-5 inline-flex relative items-center justify-center"
+                            (click)="onPromoCodeSubmition()">
+                            @if(loadingPromotionCode) {
+                            <mat-spinner class="absolute m-auto" [diameter]="30"></mat-spinner>
+                            } @else {
                             Appliquer le code
+                            }
                         </button>
                         }
                     </div>

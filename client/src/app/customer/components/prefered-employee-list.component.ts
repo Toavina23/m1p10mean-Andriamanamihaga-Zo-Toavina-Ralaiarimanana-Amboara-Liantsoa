@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { PreferencesService } from '../../services/preferences.service';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { LucideAngularModule } from 'lucide-angular';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-prefered-employee-list',
@@ -18,6 +19,7 @@ import { LucideAngularModule } from 'lucide-angular';
     MatSelectModule,
     MatTableModule,
     LucideAngularModule,
+    MatProgressSpinnerModule,
   ],
   template: `
     @if (error != '') {
@@ -43,7 +45,11 @@ import { LucideAngularModule } from 'lucide-angular';
           @if (employee?.invalid && (employee?.dirty || employee?.touched)) {
           @if (employee?.errors?.['required']) { Employé requis } }
         </p>
-        <button mat-raised-button color="primary">Ajouter</button>
+        <button mat-raised-button color="primary" [disabled]="loading">
+          @if(loading) {
+          <mat-spinner class="absolute m-auto" [diameter]="30"></mat-spinner>
+          }@else { Ajouter }
+        </button>
       </form>
       <div class="w-1/3">
         <table mat-table [dataSource]="dataSource">

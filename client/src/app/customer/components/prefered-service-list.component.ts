@@ -7,6 +7,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { PreferencesService } from '../../services/preferences.service';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { LucideAngularModule } from 'lucide-angular';
+import {
+  MatProgressSpinner,
+  MatProgressSpinnerModule,
+} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-prefered-service-list',
@@ -18,6 +22,7 @@ import { LucideAngularModule } from 'lucide-angular';
     MatSelectModule,
     MatTableModule,
     LucideAngularModule,
+    MatProgressSpinnerModule,
   ],
   template: `
     @if (error != '') {
@@ -41,10 +46,14 @@ import { LucideAngularModule } from 'lucide-angular';
           @if (service?.invalid && (service?.dirty || service?.touched)) { @if
           (service?.errors?.['required']) { Service requis } }
         </p>
-        <button mat-raised-button color="primary">Ajouter</button>
+        <button mat-raised-button color="primary" [disabled]="loading">
+          @if(loading) {
+          <mat-spinner class="absolute m-auto text-white" [diameter]="30"></mat-spinner>
+          }@else { Ajouter }
+        </button>
       </form>
       <div class="w-1/3">
-        <table mat-table [dataSource]="dataSource">
+        <table mat-table [dataSource]="dataSource" >
           <ng-container matColumnDef="service">
             <th mat-header-cell *matHeaderCellDef>Service</th>
             <td mat-cell *matCellDef="let element">{{ element.title }}</td>

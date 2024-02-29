@@ -15,6 +15,7 @@ import { HttpEventType } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatProgressSpinner, MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-appointment',
@@ -29,6 +30,7 @@ import { MatStepperModule } from '@angular/material/stepper';
     PaymentComponent,
     MatInputModule,
     MatStepperModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css',
